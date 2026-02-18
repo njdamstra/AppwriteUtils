@@ -33,7 +33,7 @@ import {
   type AdapterMetadata,
   AdapterError
 } from './DatabaseAdapter.js';
-import { type Column } from 'appwrite-utils';
+import { type Column } from '@njdamstra/appwrite-utils';
 import { TablesDB, Client } from "node-appwrite";
 
 /**

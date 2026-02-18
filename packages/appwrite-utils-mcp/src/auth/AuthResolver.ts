@@ -6,7 +6,7 @@
 import {
   SessionAuthService,
   type SessionAuthInfo,
-} from "appwrite-utils-helpers";
+} from "@njdamstra/appwrite-utils-helpers";
 
 /**
  * Authentication credentials with source information

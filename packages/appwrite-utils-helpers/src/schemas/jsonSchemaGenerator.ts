@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import type { AppwriteConfig, Attribute, CollectionCreate } from "appwrite-utils";
+import type { AppwriteConfig, Attribute, CollectionCreate } from "@njdamstra/appwrite-utils";
 import { toCamelCase, toPascalCase } from "../utils/caseConverters.js";
 import chalk from "chalk";
 import {

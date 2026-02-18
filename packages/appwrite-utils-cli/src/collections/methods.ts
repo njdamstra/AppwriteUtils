@@ -5,9 +5,9 @@ import {
   Query,
   type Models,
 } from "node-appwrite";
-import type { AppwriteConfig, CollectionCreate, Indexes, Attribute } from "appwrite-utils";
-import type { DatabaseAdapter } from "appwrite-utils-helpers";
-import { getAdapterFromConfig } from "appwrite-utils-helpers";
+import type { AppwriteConfig, CollectionCreate, Indexes, Attribute } from "@njdamstra/appwrite-utils";
+import type { DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
+import { getAdapterFromConfig } from "@njdamstra/appwrite-utils-helpers";
 import {
   nameToIdMapping,
   processQueue,
@@ -17,7 +17,7 @@ import {
   markCollectionProcessed,
   enqueueOperation
 } from "../shared/operationQueue.js";
-import { logger, SchemaGenerator } from "appwrite-utils-helpers";
+import { logger, SchemaGenerator } from "@njdamstra/appwrite-utils-helpers";
 // Legacy attribute/index helpers removed in favor of unified adapter path
 import {
   isNull,
@@ -26,9 +26,9 @@ import {
   isPlainObject,
   isString,
 } from "es-toolkit";
-import { delay, tryAwaitWithRetry } from "appwrite-utils-helpers";
-import { MessageFormatter, mapToCreateAttributeParams, mapToUpdateAttributeParams } from "appwrite-utils-helpers";
-import { isLegacyDatabases } from "appwrite-utils-helpers";
+import { delay, tryAwaitWithRetry } from "@njdamstra/appwrite-utils-helpers";
+import { MessageFormatter, mapToCreateAttributeParams, mapToUpdateAttributeParams } from "@njdamstra/appwrite-utils-helpers";
+import { isLegacyDatabases } from "@njdamstra/appwrite-utils-helpers";
 import { diffTableColumns, isIndexEqualToIndex, diffColumnsDetailed, executeColumnOperations } from "./tableOperations.js";
 import { createOrUpdateIndexesViaAdapter, deleteObsoleteIndexesViaAdapter } from "../tables/indexManager.js";
 

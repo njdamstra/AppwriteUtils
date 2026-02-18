@@ -6,7 +6,7 @@
 import { z } from 'zod';
 import { Functions } from 'node-appwrite';
 import type { ToolContext, ToolDefinition, ToolGroupDefinition } from '../ToolGroup.js';
-import { FunctionManager } from 'appwrite-utils-helpers';
+import { FunctionManager } from '@njdamstra/appwrite-utils-helpers';
 
 // ──────────────────────────────────────────────────
 // INPUT SCHEMAS

@@ -1,6 +1,6 @@
-import type { DatabaseAdapter } from "appwrite-utils-helpers";
-import { logger } from 'appwrite-utils-helpers';
-import { tryAwaitWithRetry } from "appwrite-utils-helpers";
+import type { DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
+import { logger } from '@njdamstra/appwrite-utils-helpers';
+import { tryAwaitWithRetry } from "@njdamstra/appwrite-utils-helpers";
 import { Query, ID } from "node-appwrite";
 import {
   BACKUP_TABLE_ID,

@@ -4,7 +4,7 @@ import { resolve as resolvePath, dirname, isAbsolute } from "node:path";
 import yaml from "js-yaml";
 import { register } from "tsx/esm/api";
 import { pathToFileURL } from "node:url";
-import type { AppwriteConfig, Collection, CollectionCreate } from "appwrite-utils";
+import type { AppwriteConfig, Collection, CollectionCreate } from "@njdamstra/appwrite-utils";
 import { MessageFormatter } from "../../shared/messageFormatter.js";
 import { normalizeYamlData } from "../../utils/yamlConverter.js";
 import { loadYamlConfig, type YamlSessionOptions } from "../yamlConfig.js";

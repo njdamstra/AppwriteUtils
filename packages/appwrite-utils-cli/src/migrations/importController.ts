@@ -11,13 +11,13 @@ import type {
   ConfigCollection,
   ConfigDatabase,
   AttributeMappings,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import type { ImportDataActions } from "./importDataActions.js";
-import { areCollectionNamesSame, tryAwaitWithRetry } from "appwrite-utils-helpers";
+import { areCollectionNamesSame, tryAwaitWithRetry } from "@njdamstra/appwrite-utils-helpers";
 import type { SetupOptions } from "../utilsController.js";
 import { resolveAndUpdateRelationships } from "./relationships.js";
 import { UsersController } from "../users/methods.js";
-import { logger, LegacyAdapter } from "appwrite-utils-helpers";
+import { logger, LegacyAdapter } from "@njdamstra/appwrite-utils-helpers";
 import { updateOperation } from "../shared/migrationHelpers.js";
 import {
   BatchSchema,
@@ -29,7 +29,7 @@ import {
   transferDatabaseLocalToLocal,
   transferStorageLocalToLocal,
 } from "./transfer.js";
-import { MessageFormatter } from "appwrite-utils-helpers";
+import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 import { ProgressManager } from "../shared/progressManager.js";
 
 export class ImportController {

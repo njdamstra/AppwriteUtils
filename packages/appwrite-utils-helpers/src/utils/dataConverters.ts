@@ -1,4 +1,4 @@
-import { converterFunctions, type AttributeMappings } from "appwrite-utils";
+import { converterFunctions, type AttributeMappings } from "@njdamstra/appwrite-utils";
 import { cloneDeep, isPlainObject } from "es-toolkit";
 
 /**

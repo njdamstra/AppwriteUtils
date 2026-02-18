@@ -1,5 +1,5 @@
 import { Client, Databases, Query } from "node-appwrite";
-import { AppwriteRequest, type AppwriteResponse } from "appwrite-utils";
+import { AppwriteRequest, type AppwriteResponse } from "@njdamstra/appwrite-utils";
 import { requestSchema } from "./request.js";
 
 /**

@@ -17,7 +17,7 @@ import { indexSchema } from "./index.js";
  *
  * @example
  * ```typescript
- * import { CollectionCreateSchema } from "appwrite-utils";
+ * import { CollectionCreateSchema } from "@njdamstra/appwrite-utils";
  *
  * const collection = CollectionCreateSchema.parse({
  *   name: "Users",

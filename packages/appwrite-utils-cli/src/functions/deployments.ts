@@ -4,7 +4,7 @@ import { create as createTarball } from "tar";
 import { join, relative } from "node:path";
 import fs from "node:fs";
 import { platform } from "node:os";
-import { type AppwriteFunction, type Specification } from "appwrite-utils";
+import { type AppwriteFunction, type Specification } from "@njdamstra/appwrite-utils";
 import chalk from "chalk";
 import cliProgress from "cli-progress";
 import { execSync } from "child_process";
@@ -15,8 +15,8 @@ import {
   updateFunctionSpecifications,
 } from "./methods.js";
 import ignore from "ignore";
-import { MessageFormatter } from "appwrite-utils-helpers";
-import { resolveFunctionDirectory, validateFunctionDirectory } from 'appwrite-utils-helpers';
+import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
+import { resolveFunctionDirectory, validateFunctionDirectory } from '@njdamstra/appwrite-utils-helpers';
 
 export const deployFunction = async (
   client: Client,

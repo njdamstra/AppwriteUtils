@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { logger } from 'appwrite-utils-helpers';
+import { logger } from '@njdamstra/appwrite-utils-helpers';
 
 /**
  * Generates JSON Schema for YAML import configurations.

@@ -3,7 +3,7 @@ import {
   tryAwaitWithRetry,
   parseAttribute,
   objectNeedsUpdate,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import {
   Client,
   Databases,
@@ -16,7 +16,7 @@ import {
   AppwriteException,
 } from "node-appwrite";
 import { InputFile } from "node-appwrite/file";
-import { MessageFormatter, getClient } from "appwrite-utils-helpers";
+import { MessageFormatter, getClient } from "@njdamstra/appwrite-utils-helpers";
 import { processQueue, queuedOperations } from "../shared/operationQueue.js";
 import { ProgressManager } from "../shared/progressManager.js";
 import {
@@ -35,8 +35,8 @@ import pLimit from "p-limit";
 import chalk from "chalk";
 import { join } from "node:path";
 import fs from "node:fs";
-import type { DatabaseAdapter } from "appwrite-utils-helpers";
-import { getAdapter, mapToCreateAttributeParams } from "appwrite-utils-helpers";
+import type { DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
+import { getAdapter, mapToCreateAttributeParams } from "@njdamstra/appwrite-utils-helpers";
 
 export interface ComprehensiveTransferOptions {
   sourceEndpoint: string;

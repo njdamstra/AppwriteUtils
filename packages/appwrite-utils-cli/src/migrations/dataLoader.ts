@@ -11,14 +11,14 @@ import {
   type ImportDef,
   type ImportDefs,
   type RelationshipAttribute,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import path from "path";
 import fs from "fs";
-import { convertObjectByAttributeMappings } from "appwrite-utils-helpers";
+import { convertObjectByAttributeMappings } from "@njdamstra/appwrite-utils-helpers";
 import { z } from "zod";
 import { checkForCollection } from "../collections/methods.js";
 import { ID, Users, type Databases } from "node-appwrite";
-import { logger, LegacyAdapter, MessageFormatter } from "appwrite-utils-helpers";
+import { logger, LegacyAdapter, MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 import { findOrCreateOperation, updateOperation } from "../shared/migrationHelpers.js";
 import { AuthUserCreateSchema } from "../schemas/authUser.js";
 import { UsersController } from "../users/methods.js";

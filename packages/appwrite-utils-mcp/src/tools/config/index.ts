@@ -5,7 +5,7 @@
 
 import { z } from "zod";
 import type { ToolGroupDefinition, ToolContext } from "../ToolGroup.js";
-import { ConfigValidationService, ConfigLoaderService } from "appwrite-utils-helpers";
+import { ConfigValidationService, ConfigLoaderService } from "@njdamstra/appwrite-utils-helpers";
 
 /**
  * Input schema for get_config tool (no parameters required)
@@ -85,7 +85,7 @@ async function validateConfig(
     // Discover config if path not provided
     let actualConfigPath = configPath;
     if (!actualConfigPath) {
-      const { ConfigDiscoveryService } = await import("appwrite-utils-helpers");
+      const { ConfigDiscoveryService } = await import("@njdamstra/appwrite-utils-helpers");
       const discoveryService = new ConfigDiscoveryService();
       const discovered = await discoveryService.findConfig(process.cwd());
       if (!discovered) {

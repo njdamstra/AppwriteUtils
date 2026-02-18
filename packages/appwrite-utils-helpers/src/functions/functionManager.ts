@@ -1,5 +1,5 @@
 import { Client, Functions, Runtime, type Models } from "node-appwrite";
-import { type AppwriteFunction, EventTypeSchema } from "appwrite-utils";
+import { type AppwriteFunction, EventTypeSchema } from "@njdamstra/appwrite-utils";
 import { join, relative, resolve, basename } from "node:path";
 import fs from "node:fs";
 import chalk from "chalk";

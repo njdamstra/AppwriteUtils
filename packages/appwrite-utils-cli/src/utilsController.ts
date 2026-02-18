@@ -10,12 +10,12 @@ import {
   type AppwriteConfig,
   type AppwriteFunction,
   type Specification,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import {
   findAppwriteConfig,
   findFunctionsDir,
 } from "./utils/loadConfigs.js";
-import { normalizeFunctionName, validateFunctionDirectory } from 'appwrite-utils-helpers';
+import { normalizeFunctionName, validateFunctionDirectory } from '@njdamstra/appwrite-utils-helpers';
 import { UsersController } from "./users/methods.js";
 import { AppwriteToX } from "./migrations/appwriteToX.js";
 import { ImportController } from "./migrations/importController.js";
@@ -46,7 +46,7 @@ import {
   converterFunctions,
   validationRules,
   type ValidationRules,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import { afterImportActions } from "./migrations/afterImportActions.js";
 import {
   transferDatabaseLocalToLocal,
@@ -56,10 +56,10 @@ import {
   transferUsersLocalToRemote,
   type TransferOptions,
 } from "./migrations/transfer.js";
-import { getClient, getClientWithAuth } from "appwrite-utils-helpers";
-import { getAdapterFromConfig } from "appwrite-utils-helpers";
-import type { DatabaseAdapter } from 'appwrite-utils-helpers';
-import { hasSessionAuth, findSessionByEndpointAndProject, isValidSessionCookie, type SessionAuthInfo } from "appwrite-utils-helpers";
+import { getClient, getClientWithAuth } from "@njdamstra/appwrite-utils-helpers";
+import { getAdapterFromConfig } from "@njdamstra/appwrite-utils-helpers";
+import type { DatabaseAdapter } from '@njdamstra/appwrite-utils-helpers';
+import { hasSessionAuth, findSessionByEndpointAndProject, isValidSessionCookie, type SessionAuthInfo } from "@njdamstra/appwrite-utils-helpers";
 import { fetchAllDatabases } from "./databases/methods.js";
 import {
   listFunctions,
@@ -81,9 +81,9 @@ import {
   validateWithStrictMode,
   ConfigManager,
   type ValidationResult
-} from "appwrite-utils-helpers";
+} from "@njdamstra/appwrite-utils-helpers";
 import { createImportSchemas } from "./migrations/yaml/generateImportSchemas.js";
-import { ClientFactory } from "appwrite-utils-helpers";
+import { ClientFactory } from "@njdamstra/appwrite-utils-helpers";
 import type { DatabaseSelection, BucketSelection } from "./shared/selectionDialogs.js";
 import { clearProcessingState, processQueue } from "./shared/operationQueue.js";
 

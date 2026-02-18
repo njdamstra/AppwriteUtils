@@ -2,7 +2,7 @@
 
 ## Overview
 
-`appwrite-utils-cli` is a powerful, YAML-first command-line interface tool designed for Appwrite developers who need to manage database migrations, schema generation, data import, and comprehensive project management. Built on a modular architecture with enhanced performance, this CLI tool facilitates complex tasks like setting up databases, running migrations, generating schemas, and managing backups efficiently.
+`@njdamstra/appwrite-utils-cli` is a powerful, YAML-first command-line interface tool designed for Appwrite developers who need to manage database migrations, schema generation, data import, and comprehensive project management. Built on a modular architecture with enhanced performance, this CLI tool facilitates complex tasks like setting up databases, running migrations, generating schemas, and managing backups efficiently.
 
 Highlights:
 - Adapter-first database orchestration (no legacy attribute fall-through)
@@ -44,23 +44,23 @@ Highlights:
 
 ## Installation
 
-To use `appwrite-utils-cli`, you can install it globally via npm to make it accessible from anywhere in your command line:
+To use `@njdamstra/appwrite-utils-cli`, you can install it globally via npm to make it accessible from anywhere in your command line:
 
 ```bash
-npm install -g appwrite-utils-cli
+npm install -g @njdamstra/appwrite-utils-cli
 ```
 
 However, due to the rapid development of this project, it's recommended to use the following command:
 
 ```bash
-npx --package=appwrite-utils-cli@latest appwrite-migrate [options]
+npx --package=@njdamstra/appwrite-utils-cli@latest appwrite-migrate [options]
 ```
 
 **Note: Do not install this locally into your project. It is meant to be used as a command-line tool only.**
 
 ## TablesDB Support
 
-`appwrite-utils-cli` provides comprehensive support for both traditional Appwrite Collections API and the new TablesDB API, enabling high-performance database operations with modern terminology.
+`@njdamstra/appwrite-utils-cli` provides comprehensive support for both traditional Appwrite Collections API and the new TablesDB API, enabling high-performance database operations with modern terminology.
 
 ### API Mode Detection
 
@@ -113,13 +113,13 @@ The CLI provides seamless migration between APIs:
 
 ```bash
 # Migrate Collections config to TablesDB format
-npx appwrite-utils-cli appwrite-migrate --migrate-to-tablesdb
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --migrate-to-tablesdb
 
 # Convert existing Collections to Tables (when TablesDB is available)
-npx appwrite-utils-cli appwrite-migrate --sync --use-tablesdb
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --sync --use-tablesdb
 
 # Generate schemas for TablesDB
-npx appwrite-utils-cli appwrite-migrate --generate --api-mode=tablesdb
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --generate --api-mode=tablesdb
 ```
 
 ## YAML-First Configuration
@@ -218,7 +218,7 @@ After installation, you can access the tool directly from your command line usin
 Run the CLI in interactive mode with enhanced visual feedback:
 
 ```bash
-npx --package=appwrite-utils-cli@latest appwrite-migrate --it
+npx --package=@njdamstra/appwrite-utils-cli@latest appwrite-migrate --it
 ```
 
 This provides a professional guided experience with:
@@ -232,7 +232,7 @@ This provides a professional guided experience with:
 Interactive schema generation lets you pick the format and output directory:
 
 ```bash
-npx appwrite-utils-cli appwrite-migrate --it
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --it
 # Choose: Generate schemas
 # Select: TypeScript (Zod), JSON, Python (Pydantic), or All
 # Enter output directory (absolute path respected)
@@ -249,7 +249,7 @@ npx appwrite-utils-cli appwrite-migrate --it
 Pushing local schema is now an explicit, manual selection flow to avoid unintended changes:
 
 ```bash
-npx appwrite-utils-cli appwrite-migrate --push
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --push
 ```
 
 - Select databases from the remote project (no default auto-selection)
@@ -276,7 +276,7 @@ Attribute/Index behavior:
 You can also use specific flags to run tasks without the interactive prompt:
 
 ```bash
-npx --package=appwrite-utils-cli@latest appwrite-migrate [options]
+npx --package=@njdamstra/appwrite-utils-cli@latest appwrite-migrate [options]
 ```
 
 ## YAML Import Configuration System
@@ -449,16 +449,16 @@ Generate cross-language constants files for all your Appwrite resource IDs:
 
 ```bash
 # Generate TypeScript constants (default)
-npx appwrite-utils-cli appwrite-migrate --generateConstants
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --generateConstants
 
 # Generate multiple language formats
-npx appwrite-utils-cli appwrite-migrate --generateConstants --constantsLanguages="typescript,python,php,json"
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --generateConstants --constantsLanguages="typescript,python,php,json"
 
 # Generate all available formats
-npx appwrite-utils-cli appwrite-migrate --generateConstants --constantsLanguages="typescript,javascript,python,php,dart,json,env"
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --generateConstants --constantsLanguages="typescript,javascript,python,php,dart,json,env"
 
 # Generate with custom output directory
-npx appwrite-utils-cli appwrite-migrate --generateConstants --constantsOutput="./my-constants"
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --generateConstants --constantsOutput="./my-constants"
 ```
 
 This generates constants files in your configuration directory (e.g., `.appwrite/constants/`) containing:
@@ -487,7 +487,7 @@ export type DatabaseId = typeof DATABASE_IDS[keyof typeof DATABASE_IDS];
 Transfer databases within the same project or from a local to a remote project:
 
 ```bash
-npx appwrite-utils-cli appwrite-migrate --transfer --fromDbId sourceDbId --toDbId targetDbId --remoteEndpoint https://appwrite.otherserver.com --remoteProjectId yourProjectId --remoteApiKey yourApiKey
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --transfer --fromDbId sourceDbId --toDbId targetDbId --remoteEndpoint https://appwrite.otherserver.com --remoteProjectId yourProjectId --remoteApiKey yourApiKey
 ```
 
 ### Transfer Specific Collections
@@ -495,7 +495,7 @@ npx appwrite-utils-cli appwrite-migrate --transfer --fromDbId sourceDbId --toDbI
 Transfer specific collections from one place to another, with all of their data:
 
 ```bash
-npx appwrite-utils-cli appwrite-migrate --transfer --fromDbId sourceDbId --toDbId targetDbId --fromCollectionId sourceCollectionId --toCollectionId targetCollectionId --remoteEndpoint https://appwrite.otherserver.com --remoteProjectId yourProjectId --remoteApiKey yourApiKey
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --transfer --fromDbId sourceDbId --toDbId targetDbId --fromCollectionId sourceCollectionId --toCollectionId targetCollectionId --remoteEndpoint https://appwrite.otherserver.com --remoteProjectId yourProjectId --remoteApiKey yourApiKey
 ```
 
 ### TablesDB Examples
@@ -503,16 +503,16 @@ npx appwrite-utils-cli appwrite-migrate --transfer --fromDbId sourceDbId --toDbI
 #### Enable TablesDB Mode
 ```bash
 # Force TablesDB API usage
-npx appwrite-utils-cli appwrite-migrate --sync --use-tablesdb
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --sync --use-tablesdb
 
 # Generate schemas with TablesDB terminology
-npx appwrite-utils-cli appwrite-migrate --generate --api-mode=tablesdb
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --generate --api-mode=tablesdb
 ```
 
 #### Migration from Collections to TablesDB
 ```bash
 # Convert Collections configuration to TablesDB format
-npx appwrite-utils-cli appwrite-migrate --migrate-to-tablesdb
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --migrate-to-tablesdb
 
 # Sync with TablesDB API (requires node-appwrite-tablesdb)
 npx --package=node-appwrite-tablesdb appwrite-utils-cli appwrite-migrate --sync --use-tablesdb
@@ -521,19 +521,19 @@ npx --package=node-appwrite-tablesdb appwrite-utils-cli appwrite-migrate --sync 
 #### Bulk Operations with TablesDB
 ```bash
 # Import with bulk operations enabled
-npx appwrite-utils-cli appwrite-migrate --import --bulk-operations
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --import --bulk-operations
 
 # Transfer tables with high-performance bulk operations
-npx appwrite-utils-cli appwrite-migrate --transfer --fromDbId sourceDb --toDbId targetDb --tableIds table1,table2 --use-tablesdb
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --transfer --fromDbId sourceDb --toDbId targetDb --tableIds table1,table2 --use-tablesdb
 ```
 
 #### Working with Tables (TablesDB terminology)
 ```bash
 # Wipe specific tables
-npx appwrite-utils-cli appwrite-migrate --wipeTables --tableIds users,posts
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --wipeTables --tableIds users,posts
 
 # Generate constants with table terminology
-npx appwrite-utils-cli appwrite-migrate --generateConstants --api-mode=tablesdb
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --generateConstants --api-mode=tablesdb
 ```
 
 ### Transfer Buckets
@@ -541,7 +541,7 @@ npx appwrite-utils-cli appwrite-migrate --generateConstants --api-mode=tablesdb
 Transfer files between buckets:
 
 ```bash
-npx appwrite-utils-cli appwrite-migrate --transfer --fromBucketId sourceBucketId --toBucketId targetBucketId --remoteEndpoint https://appwrite.otherserver.com --remoteProjectId yourProjectId --remoteApiKey yourApiKey
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --transfer --fromBucketId sourceBucketId --toBucketId targetBucketId --remoteEndpoint https://appwrite.otherserver.com --remoteProjectId yourProjectId --remoteApiKey yourApiKey
 ```
 
 ### Update Function Specifications
@@ -551,7 +551,7 @@ npx appwrite-utils-cli appwrite-migrate --transfer --fromBucketId sourceBucketId
 Update the CPU and RAM specifications for a function:
 
 ```bash
-npx appwrite-utils-cli appwrite-migrate --updateFunctionSpec --functionId yourFunctionId --specification s-1vcpu-1gb
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --updateFunctionSpec --functionId yourFunctionId --specification s-1vcpu-1gb
 ```
 
 Available specifications:
@@ -853,13 +853,13 @@ npx appwrite-utils-cli@latest appwrite-migrate --it
 #### Usage Examples
 ```bash
 # Default TypeScript generation
-npx appwrite-utils-cli appwrite-migrate --generateConstants
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --generateConstants
 
 # Multi-language generation
-npx appwrite-utils-cli appwrite-migrate --generateConstants --constantsLanguages="typescript,python,php,json"
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --generateConstants --constantsLanguages="typescript,python,php,json"
 
 # All formats with custom output
-npx appwrite-utils-cli appwrite-migrate --generateConstants --constantsLanguages="typescript,javascript,python,php,dart,json,env" --constantsOutput="./constants"
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --generateConstants --constantsLanguages="typescript,javascript,python,php,dart,json,env" --constantsOutput="./constants"
 ```
 
 **Migration Benefits**: 
@@ -979,7 +979,7 @@ npx appwrite-utils-cli appwrite-migrate --generateConstants --constantsLanguages
 - 0.10.83: Actually fixed the import oops
 - 0.10.82: Fixed the `lodash` import, replaced with `es-toolkit`
 - 0.10.81: Fixed `wipeCollection` -- it wasn't properly deleting all files in a loop
-- 0.10.80: Updated `appwrite-utils` req
+- 0.10.80: Updated `@njdamstra/appwrite-utils` req
 - 0.10.78: Fixed `attributesSame` so it will properly update attributes that have changed
 - 0.10.77: Added disclaimer to update function specifications for bug
 - 0.10.76: Updated CLI commands to not require an `appwriteConfig.ts` if you set API Key, ProjectId, and Endpoint
@@ -1012,7 +1012,7 @@ npx appwrite-utils-cli appwrite-migrate --generateConstants --constantsLanguages
 - 0.9.983: Fixed `afterImportActions` not resolving
 - 0.9.981: Try fixing `tryAwaitWithRetry` to catch `522` errors from Cloudflare, they were appearing for some users, also added a 1000ms delay to `tryAwaitWithRetry`
 - 0.9.98: Fixing some import errors reported by users
-- 0.9.95: Updated to include new version of `appwrite-utils`
+- 0.9.95: Updated to include new version of `@njdamstra/appwrite-utils`
 - 0.9.93: Updated `selectDatabases` and `selectCollections` from the interactive CLI to prefer local collections or databases when synchronizing the databases
 - 0.9.92: Fixed `createOrUpdateAttributes` so it deletes attributes that don't exist in local config when you are running `syncDb`. Also updated the database and collection selection, so it won't try and fetch the collections and databases that don't exist (ones you picked from local config) and error
 - 0.9.91: Fixed another webpack error, screw you react (but you're supported now so I guess not-screw-you)
@@ -1124,7 +1124,7 @@ Deployment uses the merged function set and resolves paths according to these ru
 Select which languages and which categories to generate (databases, collections/tables, buckets, functions):
 
 ```bash
-npx appwrite-utils-cli appwrite-migrate --it
+npx @njdamstra/appwrite-utils-cli appwrite-migrate --it
 # Choose: Generate cross-language constants
 # Select languages (TS/JS/Python/PHP/Dart/JSON/Env)
 # Select categories to include

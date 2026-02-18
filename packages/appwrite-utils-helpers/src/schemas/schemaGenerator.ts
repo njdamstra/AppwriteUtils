@@ -3,8 +3,8 @@ import type {
   AppwriteConfig,
   Attribute,
   RelationshipAttribute,
-} from "appwrite-utils";
-import { getVersionAwareDirectory, resolveDirectoryForApiMode, getDualDirectoryPaths } from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
+import { getVersionAwareDirectory, resolveDirectoryForApiMode, getDualDirectoryPaths } from "@njdamstra/appwrite-utils";
 import { z } from "zod";
 import fs from "fs";
 import path from "path";
@@ -77,7 +77,7 @@ export class SchemaGenerator {
     delete this.config.functions;
 
     const configPath = path.join(this.appwriteFolderPath, "appwriteConfig.ts");
-    const configContent = `import { type AppwriteConfig } from "appwrite-utils";
+    const configContent = `import { type AppwriteConfig } from "@njdamstra/appwrite-utils";
 
   const appwriteConfig: AppwriteConfig = {
     appwriteEndpoint: "${this.config.appwriteEndpoint}",
@@ -148,7 +148,7 @@ export class SchemaGenerator {
       const isTablesMode = outputDir === "tables";
       const securityField = isTablesMode ? "rowSecurity" : "documentSecurity";
 
-      const collectionContent = `import { type CollectionCreate } from "appwrite-utils";
+      const collectionContent = `import { type CollectionCreate } from "@njdamstra/appwrite-utils";
 
   const ${collection.name}Config: Partial<CollectionCreate> = {
     name: "${collection.name}",
@@ -292,7 +292,7 @@ export class SchemaGenerator {
 
   private updateTypeScriptConfig(config: AppwriteConfig): void {
     const configPath = path.join(this.appwriteFolderPath, "appwriteConfig.ts");
-    const configContent = `import { type AppwriteConfig } from "appwrite-utils";
+    const configContent = `import { type AppwriteConfig } from "@njdamstra/appwrite-utils";
 
 const appwriteConfig: AppwriteConfig = {
   appwriteEndpoint: "${config.appwriteEndpoint}",

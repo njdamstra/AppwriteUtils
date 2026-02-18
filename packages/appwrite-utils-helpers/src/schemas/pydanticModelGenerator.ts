@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { MessageFormatter } from './messageFormatter.js';
-import type { AppwriteConfig, Attribute } from 'appwrite-utils';
+import type { AppwriteConfig, Attribute } from '@njdamstra/appwrite-utils';
 
 // Embedded template for base Pydantic model (always written as base.py)
 const BASE_PYDANTIC_TEMPLATE = `"""

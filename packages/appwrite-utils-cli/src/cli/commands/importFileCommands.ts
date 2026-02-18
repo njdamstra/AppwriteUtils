@@ -9,8 +9,8 @@ import {
   MessageFormatter,
   tryAwaitWithRetry,
   delay,
-} from "appwrite-utils-helpers";
-import type { DatabaseAdapter } from "appwrite-utils-helpers";
+} from "@njdamstra/appwrite-utils-helpers";
+import type { DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
 import { ProgressManager } from "../../shared/progressManager.js";
 import { fetchAllDatabases } from "../../databases/methods.js";
 import type { InteractiveCLI } from "../../interactiveCLI.js";

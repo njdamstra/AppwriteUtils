@@ -102,7 +102,7 @@ const createLogger = () => {
       winston.format.errors({ stack: true }),
       winston.format.json()
     ),
-    defaultMeta: { service: "appwrite-utils-cli" },
+    defaultMeta: { service: "@njdamstra/appwrite-utils-cli" },
     transports,
     silent: !loggingConfig.enabled && !loggingConfig.console,
   });

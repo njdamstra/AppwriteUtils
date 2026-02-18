@@ -6,7 +6,7 @@
 import { z } from 'zod';
 import { Databases, Storage } from 'node-appwrite';
 import type { ToolContext, ToolDefinition, ToolGroupDefinition } from '../ToolGroup.js';
-import { ConfigManager } from 'appwrite-utils-helpers';
+import { ConfigManager } from '@njdamstra/appwrite-utils-helpers';
 import { backupDatabase as performBackupDatabase } from './backup.js';
 
 // ──────────────────────────────────────────────────

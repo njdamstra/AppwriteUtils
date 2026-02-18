@@ -2,19 +2,19 @@ import type { Storage, Databases, Models } from "node-appwrite";
 import { ID, Query } from "node-appwrite";
 import { InputFile } from "node-appwrite/file";
 import { ulid } from "ulidx";
-import { MessageFormatter } from 'appwrite-utils-helpers';
-import { logger } from 'appwrite-utils-helpers';
-import type { DatabaseAdapter } from 'appwrite-utils-helpers';
-import { tryAwaitWithRetry } from "appwrite-utils";
+import { MessageFormatter } from '@njdamstra/appwrite-utils-helpers';
+import { logger } from '@njdamstra/appwrite-utils-helpers';
+import type { DatabaseAdapter } from '@njdamstra/appwrite-utils-helpers';
+import { tryAwaitWithRetry } from "@njdamstra/appwrite-utils";
 import { splitIntoBatches } from "../../shared/migrationHelpers.js";
-import { retryFailedPromises } from "appwrite-utils-helpers";
+import { retryFailedPromises } from "@njdamstra/appwrite-utils-helpers";
 import { ProgressManager } from "../../shared/progressManager.js";
 import { createBackupZip } from "../../storage/backupCompression.js";
 import {
   recordCentralizedBackup,
   createCentralizedBackupTrackingTable
 } from "../tracking/centralizedTracking.js";
-import type { AppwriteConfig } from "appwrite-utils";
+import type { AppwriteConfig } from "@njdamstra/appwrite-utils";
 
 export interface CollectionBackupOptions {
   trackingDatabaseId: string;

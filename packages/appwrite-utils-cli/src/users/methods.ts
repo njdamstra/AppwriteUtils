@@ -1,4 +1,4 @@
-import type { AppwriteConfig, ConfigCollection } from "appwrite-utils";
+import type { AppwriteConfig, ConfigCollection } from "@njdamstra/appwrite-utils";
 import {
   AppwriteException,
   Databases,
@@ -12,12 +12,12 @@ import {
   type AuthUser,
   type AuthUserCreate,
 } from "../schemas/authUser.js";
-import { logger, MessageFormatter } from "appwrite-utils-helpers";
+import { logger, MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 import { splitIntoBatches } from "../shared/migrationHelpers.js";
 import {
   getAppwriteClient,
   tryAwaitWithRetry,
-} from "appwrite-utils-helpers";
+} from "@njdamstra/appwrite-utils-helpers";
 import { isUndefined } from "es-toolkit/compat";
 import { isEmpty } from "es-toolkit/compat";
 

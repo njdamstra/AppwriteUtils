@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { tmpdir } from 'os';
 import { randomBytes } from 'crypto';
-import { type AppwriteConfig, type CollectionCreate } from 'appwrite-utils';
+import { type AppwriteConfig, type CollectionCreate } from '@njdamstra/appwrite-utils';
 
 /**
  * Test utilities for creating temporary directories and test fixtures
@@ -176,7 +176,7 @@ messaging: []
       fs.writeFileSync(path.join(appwriteDir, 'config.yaml'), yamlContent);
     } else {
       const tsContent = `
-import { type AppwriteConfig } from 'appwrite-utils';
+import { type AppwriteConfig } from '@njdamstra/appwrite-utils';
 
 const appwriteConfig: AppwriteConfig = ${JSON.stringify(config, null, 2)};
 
@@ -214,7 +214,7 @@ indexes:
         fs.writeFileSync(path.join(collectionsDir, 'TestCollection.yaml'), yamlContent);
       } else {
         const tsContent = `
-import { type CollectionCreate } from 'appwrite-utils';
+import { type CollectionCreate } from '@njdamstra/appwrite-utils';
 
 const TestCollection: CollectionCreate = ${JSON.stringify(collection, null, 2)};
 
@@ -256,7 +256,7 @@ indexes:
         fs.writeFileSync(path.join(tablesDir, 'TestTable.yaml'), yamlContent);
       } else {
         const tsContent = `
-import { type TableCreate } from 'appwrite-utils';
+import { type TableCreate } from '@njdamstra/appwrite-utils';
 
 const TestTable: any = ${JSON.stringify(table, null, 2)};
 

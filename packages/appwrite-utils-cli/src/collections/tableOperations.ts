@@ -1,5 +1,5 @@
-import type { Attribute } from "appwrite-utils";
-import { mapToCreateAttributeParams, mapToUpdateAttributeParams } from "appwrite-utils-helpers";
+import type { Attribute } from "@njdamstra/appwrite-utils";
+import { mapToCreateAttributeParams, mapToUpdateAttributeParams } from "@njdamstra/appwrite-utils-helpers";
 import { Decimal } from "decimal.js";
 const EXTREME_BOUND = new Decimal('1e12');
 

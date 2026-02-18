@@ -1,10 +1,10 @@
 import { Query, type Databases, type Models } from "node-appwrite";
-import type { Attribute } from "appwrite-utils";
+import type { Attribute } from "@njdamstra/appwrite-utils";
 import { createOrUpdateAttributeWithStatusCheck } from "../collections/attributes.js";
 import { fetchAndCacheCollectionByName } from "../collections/methods.js";
-import { tryAwaitWithRetry } from "appwrite-utils-helpers";
-import type { DatabaseAdapter } from "appwrite-utils-helpers";
-import { logger, MessageFormatter } from "appwrite-utils-helpers";
+import { tryAwaitWithRetry } from "@njdamstra/appwrite-utils-helpers";
+import type { DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
+import { logger, MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 
 export interface QueuedOperation {
   type: "attribute";

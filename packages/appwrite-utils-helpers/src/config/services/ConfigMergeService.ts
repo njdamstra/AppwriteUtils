@@ -1,4 +1,4 @@
-import type { AppwriteConfig } from "appwrite-utils";
+import type { AppwriteConfig } from "@njdamstra/appwrite-utils";
 import { merge, cloneDeep, isPlainObject } from "es-toolkit";
 import type { SessionAuthInfo } from "./SessionAuthService.js";
 

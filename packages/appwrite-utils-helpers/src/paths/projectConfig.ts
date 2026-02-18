@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, dirname, resolve, isAbsolute } from "node:path";
 import { MessageFormatter } from "../shared/messageFormatter.js";
-import type { AppwriteConfig } from "appwrite-utils";
+import type { AppwriteConfig } from "@njdamstra/appwrite-utils";
 
 export interface AppwriteProjectConfig {
   projectId: string;

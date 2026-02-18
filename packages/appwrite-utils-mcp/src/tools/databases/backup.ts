@@ -5,7 +5,7 @@
  */
 
 import type { Databases, Storage, Models } from 'node-appwrite';
-import type { AppwriteConfig } from 'appwrite-utils';
+import type { AppwriteConfig } from '@njdamstra/appwrite-utils';
 import { ulid } from 'ulidx';
 import { Query } from 'node-appwrite';
 

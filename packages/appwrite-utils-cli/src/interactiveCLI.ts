@@ -22,7 +22,7 @@ import {
   type Runtime,
   type Specification,
   type FunctionScope,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import { ulid } from "ulidx";
 import chalk from "chalk";
 import { DateTime } from "luxon";
@@ -35,7 +35,7 @@ import { join } from "node:path";
 import path from "path";
 import fs from "node:fs";
 import os from "node:os";
-import { MessageFormatter, findYamlConfig } from "appwrite-utils-helpers";
+import { MessageFormatter, findYamlConfig } from "@njdamstra/appwrite-utils-helpers";
 import { findAppwriteConfig } from "./utils/loadConfigs.js";
 
 // Import command modules
@@ -95,7 +95,7 @@ export class InteractiveCLI {
       "Welcome to Appwrite Utils CLI Tool by Zach Handley"
     );
     MessageFormatter.info(
-      "For more information, visit https://github.com/zachhandley/AppwriteUtils"
+      "For more information, visit https://github.com/njdamstra/AppwriteUtils"
     );
 
     // Detect configuration type

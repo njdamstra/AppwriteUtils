@@ -3,10 +3,10 @@ import type {
   ImportDef,
   ConfigDatabase,
   CollectionCreate,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import type { ImportDataActions } from "../importDataActions.js";
-import { convertObjectByAttributeMappings } from "appwrite-utils-helpers";
-import { logger } from 'appwrite-utils-helpers';
+import { convertObjectByAttributeMappings } from "@njdamstra/appwrite-utils-helpers";
+import { logger } from '@njdamstra/appwrite-utils-helpers';
 
 /**
  * Service responsible for data transformation during import.

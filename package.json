@@ -1,5 +1,5 @@
 {
-  "name": "appwrite-utils-monorepo",
+  "name": "@njdamstra/appwrite-utils-monorepo",
   "version": "0.1.13",
   "description": "Appwrite Utility Functions to help with database management, data conversion, data import, migrations, and much more.",
   "private": true,
@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/zachhandley/AppwriteUtils"
+    "url": "https://github.com/njdamstra/AppwriteUtils"
   },
   "scripts": {
     "build": "cd packages/appwrite-utils && bun run build && cd ../appwrite-utils-helpers && bun run build && cd ../appwrite-utils-cli && bun run build && cd ../appwrite-utils-mcp && bun run build",

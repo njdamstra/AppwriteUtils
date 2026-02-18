@@ -1,7 +1,7 @@
 import { Databases, Query, type Models } from "node-appwrite";
-import { delay, tryAwaitWithRetry } from "appwrite-utils-helpers";
+import { delay, tryAwaitWithRetry } from "@njdamstra/appwrite-utils-helpers";
 import { fetchAllCollections } from "../collections/methods.js";
-import { MessageFormatter } from "appwrite-utils-helpers";
+import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 
 export const fetchAllDatabases = async (
   database: Databases

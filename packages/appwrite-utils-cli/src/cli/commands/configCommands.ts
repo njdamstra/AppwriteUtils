@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 import fs from "fs";
 import path from "path";
-import { MessageFormatter } from 'appwrite-utils-helpers';
+import { MessageFormatter } from '@njdamstra/appwrite-utils-helpers';
 import { migrateConfig } from "../../utils/configMigration.js";
 import {
   validateCollectionsTablesConfig,
@@ -12,13 +12,13 @@ import {
   YamlLoader,
   resolveCollectionsDir,
   resolveTablesDir
-} from "appwrite-utils-helpers";
+} from "@njdamstra/appwrite-utils-helpers";
 import {
   createMigrationPlan,
   executeMigrationPlan,
   saveMigrationResult,
   type MigrationStrategy,
-} from 'appwrite-utils-helpers';
+} from '@njdamstra/appwrite-utils-helpers';
 import { createEmptyCollection } from "../../utils/setupFiles.js";
 import chalk from "chalk";
 import type { InteractiveCLI } from "../../interactiveCLI.js";
@@ -63,7 +63,7 @@ export const configCommands = {
         return;
       }
 
-      const { validateCollectionsTablesConfig, reportValidationResults } = await import("appwrite-utils-helpers");
+      const { validateCollectionsTablesConfig, reportValidationResults } = await import("@njdamstra/appwrite-utils-helpers");
       const validation = validateCollectionsTablesConfig(config);
 
       reportValidationResults(validation, { verbose: true });

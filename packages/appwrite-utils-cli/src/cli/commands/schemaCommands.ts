@@ -1,8 +1,8 @@
 import inquirer from "inquirer";
 import path from "path";
 import chalk from "chalk";
-import { MessageFormatter } from 'appwrite-utils-helpers';
-import { SchemaGenerator } from 'appwrite-utils-helpers';
+import { MessageFormatter } from '@njdamstra/appwrite-utils-helpers';
+import { SchemaGenerator } from '@njdamstra/appwrite-utils-helpers';
 import { setupDirsFiles } from "../../utils/setupFiles.js";
 import { fetchAllDatabases } from "../../databases/methods.js";
 import type { InteractiveCLI } from "../../interactiveCLI.js";
@@ -126,7 +126,7 @@ export const schemaCommands = {
     ]);
 
     try {
-      const { ConstantsGenerator } = await import("appwrite-utils-helpers");
+      const { ConstantsGenerator } = await import("@njdamstra/appwrite-utils-helpers");
       const generator = new ConstantsGenerator((cli as any).controller.config);
 
       const include = {

@@ -3,7 +3,7 @@ import {
   attributeSchema,
   parseAttribute,
   type Attribute,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import {
   nameToIdMapping,
   enqueueOperation,
@@ -14,11 +14,11 @@ import {
   delay,
   tryAwaitWithRetry,
   calculateExponentialBackoff,
-} from "appwrite-utils-helpers";
+} from "@njdamstra/appwrite-utils-helpers";
 import chalk from "chalk";
 import { Decimal } from "decimal.js";
-import type { DatabaseAdapter, CreateAttributeParams, UpdateAttributeParams, DeleteAttributeParams } from "appwrite-utils-helpers";
-import { logger, MessageFormatter, isDatabaseAdapter } from "appwrite-utils-helpers";
+import type { DatabaseAdapter, CreateAttributeParams, UpdateAttributeParams, DeleteAttributeParams } from "@njdamstra/appwrite-utils-helpers";
+import { logger, MessageFormatter, isDatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
 
 // Extreme values that Appwrite may return, which should be treated as undefined
 const EXTREME_MIN_INTEGER = -9223372036854776000;

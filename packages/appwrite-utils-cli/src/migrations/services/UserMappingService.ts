@@ -3,9 +3,9 @@ import { ID } from "node-appwrite";
 import type {
   AttributeMappings,
   AppwriteConfig,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import { AuthUserCreateSchema } from "../../schemas/authUser.js";
-import { logger } from 'appwrite-utils-helpers';
+import { logger } from '@njdamstra/appwrite-utils-helpers';
 import type { DataTransformationService } from "./DataTransformationService.js";
 
 /**

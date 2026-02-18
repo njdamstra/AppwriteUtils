@@ -5,7 +5,7 @@ import {
   TableCreateSchema,
   type CollectionCreate,
   type Collection
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import { register } from "tsx/esm/api";
 import { pathToFileURL } from "node:url";
 import yaml from "js-yaml";

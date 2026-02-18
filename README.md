@@ -1,17 +1,17 @@
 # Appwrite Utils Packages
 
-This repository contains two distinct packages designed to enhance your experience with Appwrite: `appwrite-utils` and `appwrite-utils-cli`. These packages provide a range of utilities for managing data migrations, schema updates, data conversion, and more, tailored for Appwrite projects.
+This repository contains two distinct packages designed to enhance your experience with Appwrite: `@njdamstra/appwrite-utils` and `@njdamstra/appwrite-utils-cli`. These packages provide a range of utilities for managing data migrations, schema updates, data conversion, and more, tailored for Appwrite projects.
 
-## `appwrite-utils`
+## `@njdamstra/appwrite-utils`
 
-The `appwrite-utils` package is a comprehensive TypeScript library offering a suite of utilities and helper functions for data manipulation, schema management, and seamless integration with Appwrite services. It's designed to be imported into your project, providing access to validation functions, converter functions, and more.
+The `@njdamstra/appwrite-utils` package is a comprehensive TypeScript library offering a suite of utilities and helper functions for data manipulation, schema management, and seamless integration with Appwrite services. It's designed to be imported into your project, providing access to validation functions, converter functions, and more.
 
 ### Getting Started
 
-To integrate `appwrite-utils` into your project, run:
+To integrate `@njdamstra/appwrite-utils` into your project, run:
 
 ```bash
-npm install appwrite-utils
+npm install @njdamstra/appwrite-utils
 ```
 
 ### Key Features
@@ -25,24 +25,24 @@ npm install appwrite-utils
 After installation, import and use the utilities directly in your TypeScript or JavaScript code. For example:
 
 ```typescript
-import { converterFunctions, validationFunctions } from 'appwrite-utils';
+import { converterFunctions, validationFunctions } from '@njdamstra/appwrite-utils';
 
 console.log(validatorFunctions.isNumber(1234));  // Output: true
 console.log(converterFunctions.anyToString(1234));  // Output: "1234"
 ```
 
-For detailed usage instructions and function documentation, refer to the package's documentation inside your `node_modules/appwrite-utils` directory.
+For detailed usage instructions and function documentation, refer to the package's documentation inside your `node_modules/@njdamstra/appwrite-utils` directory.
 
-## `appwrite-utils-cli`
+## `@njdamstra/appwrite-utils-cli`
 
-The `appwrite-utils-cli` package is a command-line interface tool for executing scripts to manage your Appwrite project. It supports database migrations, schema generation, data import, and more, directly through `npx`.
+The `@njdamstra/appwrite-utils-cli` package is a command-line interface tool for executing scripts to manage your Appwrite project. It supports database migrations, schema generation, data import, and more, directly through `npx`.
 
 ### Getting Started
 
-To use `appwrite-utils-cli`, run it directly using `npx` without installing it globally:
+To use `@njdamstra/appwrite-utils-cli`, run it directly using `npx` without installing it globally:
 
 ```bash
-npx --package=appwrite-utils-cli@latest appwrite-migrate --args
+npx --package=@njdamstra/appwrite-utils-cli@latest appwrite-migrate --args
 ```
 
 Replace `--args` with the appropriate options for your task.
@@ -60,19 +60,19 @@ Replace `--args` with the appropriate options for your task.
 Initialize your Appwrite project configurations and set up databases, run migrations, generate schemas, manage backups, and more, directly from your command line. For example, to set up your project:
 
 ```bash
-npx --package=appwrite-utils-cli@latest appwrite-setup
+npx --package=@njdamstra/appwrite-utils-cli@latest appwrite-setup
 ```
 
 To run migrations in a development environment and import data:
 
 ```bash
-npx --package=appwrite-utils-cli@latest appwrite-migrate --dev --import
+npx --package=@njdamstra/appwrite-utils-cli@latest appwrite-migrate --dev --import
 ```
 
 For a complete list of commands and options, run the help command:
 
 ```bash
-npx --package=appwrite-utils-cli@latest appwrite-migrate --help
+npx --package=@njdamstra/appwrite-utils-cli@latest appwrite-migrate --help
 ```
 
 ## Changelog

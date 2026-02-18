@@ -2,7 +2,7 @@ import { z } from "zod";
 import yaml from "js-yaml";
 import fs from "fs";
 import path from "path";
-import { AppwriteConfigSchema, type AppwriteConfig, RuntimeSchema, FunctionScopes, FunctionSpecifications, permissionsSchema, PermissionToAppwritePermission, type AppwriteFunction } from "appwrite-utils";
+import { AppwriteConfigSchema, type AppwriteConfig, RuntimeSchema, FunctionScopes, FunctionSpecifications, permissionsSchema, PermissionToAppwritePermission, type AppwriteFunction } from "@njdamstra/appwrite-utils";
 import { shouldIgnoreDirectory } from "../utils/directoryUtils.js";
 import { MessageFormatter } from "../shared/messageFormatter.js";
 

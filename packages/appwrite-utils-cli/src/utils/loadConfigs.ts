@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { type AppwriteConfig, type Collection, type CollectionCreate, type Table, type TableCreate } from "appwrite-utils";
+import { type AppwriteConfig, type Collection, type CollectionCreate, type Table, type TableCreate } from "@njdamstra/appwrite-utils";
 import { register } from "tsx/esm/api"; // Import the register function
 import { pathToFileURL } from "node:url";
 import chalk from "chalk";
@@ -13,10 +13,10 @@ import {
   reportValidationResults,
   type YamlSessionOptions,
   type ValidationResult
-} from "appwrite-utils-helpers";
-import { detectAppwriteVersionCached, fetchServerVersion, isVersionAtLeast } from 'appwrite-utils-helpers';
-import { MessageFormatter } from "appwrite-utils-helpers";
-import { resolveCollectionsDir, resolveTablesDir } from 'appwrite-utils-helpers';
+} from "@njdamstra/appwrite-utils-helpers";
+import { detectAppwriteVersionCached, fetchServerVersion, isVersionAtLeast } from '@njdamstra/appwrite-utils-helpers';
+import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
+import { resolveCollectionsDir, resolveTablesDir } from '@njdamstra/appwrite-utils-helpers';
 import {
   findAppwriteConfig,
   findAppwriteConfigTS,
@@ -24,7 +24,7 @@ import {
   discoverCollections,
   discoverTables,
   discoverLegacyDirectory
-} from 'appwrite-utils-helpers';
+} from '@njdamstra/appwrite-utils-helpers';
 
 /**
  * Session authentication preservation options for config loading
@@ -71,7 +71,7 @@ export function createSessionPreservation(
 }
 
 // Re-export config discovery functions for backward compatibility
-export { findAppwriteConfig, findFunctionsDir } from 'appwrite-utils-helpers';
+export { findAppwriteConfig, findFunctionsDir } from '@njdamstra/appwrite-utils-helpers';
 
 /**
  * Loads the Appwrite configuration and returns both config and the path where it was found.

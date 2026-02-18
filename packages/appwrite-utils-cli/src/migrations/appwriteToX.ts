@@ -1,4 +1,4 @@
-import { SchemaGenerator, findYamlConfig } from "appwrite-utils-helpers";
+import { SchemaGenerator, findYamlConfig } from "@njdamstra/appwrite-utils-helpers";
 import {
   Client,
   Compression,
@@ -23,14 +23,14 @@ import {
   parseAttribute,
   type Runtime,
   type Specification,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import { getDatabaseFromConfig } from "./afterImportActions.js";
-import { getAdapterFromConfig } from "appwrite-utils-helpers";
+import { getAdapterFromConfig } from "@njdamstra/appwrite-utils-helpers";
 import { listBuckets } from "../storage/methods.js";
 import { listFunctions, listFunctionDeployments, getFunction } from "../functions/methods.js";
-import { MessageFormatter } from "appwrite-utils-helpers";
-import { isLegacyDatabases } from "appwrite-utils-helpers";
-import type { DatabaseAdapter } from "appwrite-utils-helpers";
+import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
+import { isLegacyDatabases } from "@njdamstra/appwrite-utils-helpers";
+import type { DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
 import type { DatabaseSelection, BucketSelection } from "../shared/selectionDialogs.js";
 
 /**

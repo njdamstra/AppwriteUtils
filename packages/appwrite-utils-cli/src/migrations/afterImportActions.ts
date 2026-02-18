@@ -10,13 +10,13 @@ import { InputFile } from "node-appwrite/file";
 import path from "path";
 import fs from "fs";
 import os from "os";
-import { logger, MessageFormatter } from "appwrite-utils-helpers";
+import { logger, MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 import {
   tryAwaitWithRetry,
   type AfterImportActions,
   type AppwriteConfig,
-} from "appwrite-utils";
-import { getClientFromConfig } from "appwrite-utils-helpers";
+} from "@njdamstra/appwrite-utils";
+import { getClientFromConfig } from "@njdamstra/appwrite-utils-helpers";
 
 export const getDatabaseFromConfig = (config: AppwriteConfig) => {
   getClientFromConfig(config); // Sets config.appwriteClient if missing

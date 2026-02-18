@@ -2,8 +2,8 @@ import { setupDirsFiles } from "./utils/setupFiles.js";
 import { loadConfig } from "./utils/loadConfigs.js";
 import path from "path";
 import fs from "fs";
-import type { AppwriteConfig } from "appwrite-utils";
-import { MessageFormatter } from "appwrite-utils-helpers";
+import type { AppwriteConfig } from "@njdamstra/appwrite-utils";
+import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 
 export class SetupController {
   private currentDir: string;

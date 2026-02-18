@@ -1,16 +1,16 @@
 import { type Databases, type Storage } from "node-appwrite";
-import type { AppwriteConfig } from "appwrite-utils";
+import type { AppwriteConfig } from "@njdamstra/appwrite-utils";
 import {
   validationRules,
   type ValidationRules,
   type AttributeMappings,
-} from "appwrite-utils";
-import { converterFunctions, type ConverterFunctions } from "appwrite-utils";
-import { convertObjectBySchema } from "appwrite-utils-helpers";
-import { type AfterImportActions } from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
+import { converterFunctions, type ConverterFunctions } from "@njdamstra/appwrite-utils";
+import { convertObjectBySchema } from "@njdamstra/appwrite-utils-helpers";
+import { type AfterImportActions } from "@njdamstra/appwrite-utils";
 import { afterImportActions } from "./afterImportActions.js";
-import { logger } from "appwrite-utils-helpers";
-import { tryAwaitWithRetry } from "appwrite-utils-helpers";
+import { logger } from "@njdamstra/appwrite-utils-helpers";
+import { tryAwaitWithRetry } from "@njdamstra/appwrite-utils-helpers";
 
 export class ImportDataActions {
   private db: Databases;

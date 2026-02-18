@@ -1,16 +1,16 @@
 import { ID, Query, type Databases } from "node-appwrite";
 import { BatchSchema, OperationSchema, type Operation } from "../storage/schemas.js";
-import { AttributeMappingsSchema } from "appwrite-utils";
+import { AttributeMappingsSchema } from "@njdamstra/appwrite-utils";
 import { z } from "zod";
-import { logger } from 'appwrite-utils-helpers';
-import { tryAwaitWithRetry } from "appwrite-utils-helpers";
+import { logger } from '@njdamstra/appwrite-utils-helpers';
+import { tryAwaitWithRetry } from "@njdamstra/appwrite-utils-helpers";
 import {
   findOrCreateOperation as findOrCreateOp,
   updateOperation as updateOp,
   getOperation as getOp
 } from "./operationsTable.js";
-import type { DatabaseAdapter } from "appwrite-utils-helpers";
-import { MessageFormatter } from 'appwrite-utils-helpers';
+import type { DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
+import { MessageFormatter } from '@njdamstra/appwrite-utils-helpers';
 
 /**
  * Object that contains the context for an action that needs to be executed after import

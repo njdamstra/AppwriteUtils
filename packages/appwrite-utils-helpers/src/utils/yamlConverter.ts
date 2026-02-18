@@ -1,5 +1,5 @@
 import yaml from "js-yaml";
-import type { Collection, CollectionCreate } from "appwrite-utils";
+import type { Collection, CollectionCreate } from "@njdamstra/appwrite-utils";
 import { Decimal } from "decimal.js";
 
 // Extreme values that Appwrite may return, which should be treated as undefined

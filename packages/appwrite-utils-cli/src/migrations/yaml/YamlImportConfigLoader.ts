@@ -2,8 +2,8 @@ import { z } from "zod";
 import path from "path";
 import fs from "fs";
 import yaml from "js-yaml";
-import { logger } from 'appwrite-utils-helpers';
-import type { ImportDef, AttributeMappings } from "appwrite-utils";
+import { logger } from '@njdamstra/appwrite-utils-helpers';
+import type { ImportDef, AttributeMappings } from "@njdamstra/appwrite-utils";
 
 // YAML Import Configuration Schema
 export const YamlImportConfigSchema = z.object({

@@ -1,5 +1,5 @@
 import type { CreateAttributeParams, UpdateAttributeParams } from "../adapters/DatabaseAdapter.js";
-import type { Attribute } from "appwrite-utils";
+import type { Attribute } from "@njdamstra/appwrite-utils";
 
 function ensureNumber(n: any): number | undefined {
   if (n === null || n === undefined) return undefined;

@@ -1,5 +1,5 @@
 import { Client } from "node-appwrite";
-import type { AppwriteConfig } from "appwrite-utils";
+import type { AppwriteConfig } from "@njdamstra/appwrite-utils";
 import { AdapterFactory } from "../adapters/AdapterFactory.js";
 import type { DatabaseAdapter } from "../adapters/DatabaseAdapter.js";
 import { logger } from "../shared/logging.js";

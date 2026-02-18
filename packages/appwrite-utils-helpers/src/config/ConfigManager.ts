@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { Client } from "node-appwrite";
-import type { AppwriteConfig, Collection, CollectionCreate, AppwriteFunction } from "appwrite-utils";
+import type { AppwriteConfig, Collection, CollectionCreate, AppwriteFunction } from "@njdamstra/appwrite-utils";
 import {
   ConfigDiscoveryService,
   ConfigLoaderService,

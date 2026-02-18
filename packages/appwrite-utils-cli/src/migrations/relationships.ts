@@ -4,8 +4,8 @@ import type {
   AppwriteConfig,
   Attribute,
   RelationshipAttribute,
-} from "appwrite-utils";
-import { logger, MessageFormatter } from "appwrite-utils-helpers";
+} from "@njdamstra/appwrite-utils";
+import { logger, MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 
 /**
  * Finds collections that have defined relationship attributes.

@@ -2,9 +2,9 @@ import type { Storage, Databases, Models } from "node-appwrite";
 import { ID } from "node-appwrite";
 import { InputFile } from "node-appwrite/file";
 import { ulid } from "ulidx";
-import { MessageFormatter } from 'appwrite-utils-helpers';
-import { logger } from 'appwrite-utils-helpers';
-import type { DatabaseAdapter } from 'appwrite-utils-helpers';
+import { MessageFormatter } from '@njdamstra/appwrite-utils-helpers';
+import { logger } from '@njdamstra/appwrite-utils-helpers';
+import type { DatabaseAdapter } from '@njdamstra/appwrite-utils-helpers';
 import { backupDatabase } from "../../storage/methods.js";
 import { backupBucket } from "./bucketBackup.js";
 import {
@@ -16,7 +16,7 @@ import type {
   DatabaseBackupReference,
   BucketBackupReference
 } from "../schemas/comprehensiveManifest.js";
-import type { AppwriteConfig } from "appwrite-utils";
+import type { AppwriteConfig } from "@njdamstra/appwrite-utils";
 import { fetchAllDatabases } from "../../databases/methods.js";
 
 export interface ComprehensiveBackupOptions {

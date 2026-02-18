@@ -3,7 +3,7 @@
  * @packageDocumentation
  */
 
-import { AdapterFactory, type DatabaseAdapter } from 'appwrite-utils-helpers';
+import { AdapterFactory, type DatabaseAdapter } from '@njdamstra/appwrite-utils-helpers';
 import type { Client } from 'node-appwrite';
 
 /**

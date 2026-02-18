@@ -1,20 +1,20 @@
 import { mkdirSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { ulid } from "ulidx";
-import { MessageFormatter } from "appwrite-utils-helpers";
+import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 import {
   detectAppwriteVersionCached,
   fetchServerVersion,
   isVersionAtLeast,
   type ApiMode
-} from "appwrite-utils-helpers";
+} from "@njdamstra/appwrite-utils-helpers";
 import {
   loadAppwriteProjectConfig,
   findAppwriteProjectConfig,
   isTablesDBProject
-} from "appwrite-utils-helpers";
-import { findYamlConfig, generateYamlConfigTemplate, loadYamlConfig } from "appwrite-utils-helpers";
-import { hasSessionAuth } from "appwrite-utils-helpers";
+} from "@njdamstra/appwrite-utils-helpers";
+import { findYamlConfig, generateYamlConfigTemplate, loadYamlConfig } from "@njdamstra/appwrite-utils-helpers";
+import { hasSessionAuth } from "@njdamstra/appwrite-utils-helpers";
 
 /**
  * Terminology configuration for API mode-specific naming

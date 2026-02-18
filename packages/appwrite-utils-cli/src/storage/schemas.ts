@@ -4,7 +4,7 @@ import {
   type Attribute,
   parseAttribute,
   CollectionCreateSchema,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 
 export const BackupSchema = z.object({
   $id: z.string(),

@@ -2,7 +2,7 @@
 
 ## Overview
 
-`appwrite-utils` is a comprehensive TypeScript library designed to streamline the development process for Appwrite projects. This library provides a suite of utilities and helper functions that facilitate data manipulation, schema management, YAML configuration validation, and seamless integration with Appwrite services. Whether you're managing data migrations, schema updates, or building custom tools on top of the CLI architecture, `appwrite-utils` provides the foundation for professional Appwrite development.
+`@njdamstra/appwrite-utils` is a comprehensive TypeScript library designed to streamline the development process for Appwrite projects. This library provides a suite of utilities and helper functions that facilitate data manipulation, schema management, YAML configuration validation, and seamless integration with Appwrite services. Whether you're managing data migrations, schema updates, or building custom tools on top of the CLI architecture, `@njdamstra/appwrite-utils` provides the foundation for professional Appwrite development.
 
 Highlights:
 - Dual-terminology schemas for Collections and TablesDB
@@ -37,15 +37,15 @@ Highlights:
 
 ## Installation
 
-To integrate `appwrite-utils` into your project, ensure you have npm installed and run the following command in your project directory:
+To integrate `@njdamstra/appwrite-utils` into your project, ensure you have npm installed and run the following command in your project directory:
 
 ```bash
-npm install appwrite-utils
+npm install @njdamstra/appwrite-utils
 ```
 
 ## TablesDB & Collections Support
 
-`appwrite-utils` provides seamless support for both traditional Appwrite Collections API and the new TablesDB API, allowing you to work with either terminology based on your project needs.
+`@njdamstra/appwrite-utils` provides seamless support for both traditional Appwrite Collections API and the new TablesDB API, allowing you to work with either terminology based on your project needs.
 
 ### API Modes
 
@@ -71,7 +71,7 @@ import {
   TableCreateSchema,
   CollectionSchema,
   TableSchema
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 
 // Collections API - Document-based terminology
 const collection = CollectionCreateSchema.parse({
@@ -106,7 +106,7 @@ import type {
   Table,
   CollectionCreate,
   TableCreate
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 
 // Both types are structurally identical but semantically different
 const handleCollection = (collection: Collection) => {
@@ -157,7 +157,7 @@ databases:
 ### Migration Between APIs
 
 ```typescript
-import { CollectionCreateSchema, TableCreateSchema } from "appwrite-utils";
+import { CollectionCreateSchema, TableCreateSchema } from "@njdamstra/appwrite-utils";
 
 // Convert Collection definition to Table
 const collectionConfig = {
@@ -272,7 +272,7 @@ Both `getFileViewUrl` and `getFileDownloadUrl` take parameters like `endpoint`, 
 After installing the package, you can directly import and use the various utilities in your TypeScript or JavaScript code. For example:
 
 ```typescript
-import { isNumber, anyToString } from "appwrite-utils";
+import { isNumber, anyToString } from "@njdamstra/appwrite-utils";
 
 // Use the functions directly in your code
 console.log(isNumber(5)); // Output: true
@@ -283,7 +283,7 @@ This setup ensures that your interactions with Appwrite are more robust, less er
 
 ## CLI Integration
 
-Version 1.0.0 is designed to work seamlessly with `appwrite-utils-cli`'s YAML-first architecture:
+Version 1.0.0 is designed to work seamlessly with `@njdamstra/appwrite-utils-cli`'s YAML-first architecture:
 
 ### Import System Integration
 
@@ -293,7 +293,7 @@ import {
   AttributeMappings,
   ValidationRules,
   ConverterFunctions 
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 
 // Type-safe YAML import configuration
 const importConfig: YamlImportConfig = {
@@ -331,7 +331,7 @@ import {
   CollectionCreateSchema,
   AttributeSchema,
   AppwriteConfigSchema 
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 
 // Validate YAML configurations with Zod schemas
 const validatedConfig = AppwriteConfigSchema.parse(yamlConfig);
@@ -349,7 +349,7 @@ import {
   objectNeedsUpdate,
   cleanObjectForAppwrite,
   listDocumentsBatched
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 
 // Data transformation used by CLI import system
 const transformedData = convertObjectByAttributeMappings(sourceData, mappings);
@@ -414,10 +414,10 @@ const documents = await listDocumentsBatched(
 #### Usage Examples
 ```typescript
 // Collections Mode
-import { CollectionCreateSchema } from "appwrite-utils";
+import { CollectionCreateSchema } from "@njdamstra/appwrite-utils";
 
 // TablesDB Mode
-import { TableCreateSchema } from "appwrite-utils";
+import { TableCreateSchema } from "@njdamstra/appwrite-utils";
 
 // Both schemas accept identical configuration objects
 const config = { name: "Users", attributes: [...] };
@@ -517,7 +517,7 @@ const config = { name: "Users", attributes: [...] };
 - **Legacy type support** maintained for smooth migration
 - **Incremental adoption** allowing gradual migration to YAML
 
-**Integration Note**: This version is specifically designed to work with `appwrite-utils-cli` 1.0.0's YAML-first architecture while maintaining full backward compatibility.
+**Integration Note**: This version is specifically designed to work with `@njdamstra/appwrite-utils-cli` 1.0.0's YAML-first architecture while maintaining full backward compatibility.
 
 ---
 
@@ -542,7 +542,7 @@ const config = { name: "Users", attributes: [...] };
 Tables and collections support both a single `databaseId` and multiple `databaseIds` for targeting multiple databases (e.g., dev/staging/main) with the same definition:
 
 ```ts
-import { TableCreateSchema } from 'appwrite-utils';
+import { TableCreateSchema } from '@njdamstra/appwrite-utils';
 
 const table = TableCreateSchema.parse({
   name: 'Analytics',

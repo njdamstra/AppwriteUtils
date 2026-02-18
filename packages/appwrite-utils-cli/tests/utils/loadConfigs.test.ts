@@ -218,7 +218,7 @@ indexes: []
       // Create config without .appwrite structure
       const config = TestUtils.createTestAppwriteConfig();
       const tsContent = `
-import { type AppwriteConfig } from 'appwrite-utils';
+import { type AppwriteConfig } from '@njdamstra/appwrite-utils';
 const appwriteConfig: AppwriteConfig = ${JSON.stringify(config, null, 2)};
 export default appwriteConfig;
 `;

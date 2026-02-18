@@ -2,9 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
 import { homedir } from 'node:os';
-import { AppwriteFunctionSchema, type AppwriteFunction } from 'appwrite-utils';
-import { shouldIgnoreDirectory } from 'appwrite-utils-helpers';
-import { MessageFormatter } from 'appwrite-utils-helpers';
+import { AppwriteFunctionSchema, type AppwriteFunction } from '@njdamstra/appwrite-utils';
+import { shouldIgnoreDirectory } from '@njdamstra/appwrite-utils-helpers';
+import { MessageFormatter } from '@njdamstra/appwrite-utils-helpers';
 
 function findGitRoot(startDir: string): string {
   let dir = path.resolve(startDir);

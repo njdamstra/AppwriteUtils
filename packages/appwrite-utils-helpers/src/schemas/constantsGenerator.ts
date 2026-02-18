@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
-import { type AppwriteConfig } from "appwrite-utils";
+import { type AppwriteConfig } from "@njdamstra/appwrite-utils";
 import { MessageFormatter } from "./messageFormatter.js";
 
 export type SupportedLanguage =
@@ -293,7 +293,7 @@ ${Object.entries(functions).map(([key, value]) => `  static String get ${this.to
     return JSON.stringify({
       meta: {
         generated: new Date().toISOString(),
-        generator: "appwrite-utils-cli"
+        generator: "@njdamstra/appwrite-utils-cli"
       },
       databases: c.databases,
       collections: c.collections,

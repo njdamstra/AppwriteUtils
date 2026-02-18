@@ -2,9 +2,9 @@ import type {
   AttributeMappings,
   ImportDef,
   CollectionCreate,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import type { ImportDataActions } from "../importDataActions.js";
-import { logger } from 'appwrite-utils-helpers';
+import { logger } from '@njdamstra/appwrite-utils-helpers';
 import fs from "fs";
 import path from "path";
 

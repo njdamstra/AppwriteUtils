@@ -17,14 +17,14 @@ import {
   usesTableTerminology,
   type YamlTerminologyConfig,
   type YamlCollectionData
-} from "appwrite-utils-helpers";
-import { createYamlLoader } from "appwrite-utils-helpers";
+} from "@njdamstra/appwrite-utils-helpers";
+import { createYamlLoader } from "@njdamstra/appwrite-utils-helpers";
 import { YamlImportIntegration } from "../migrations/yaml/YamlImportIntegration.js";
 import { createImportSchemas } from "../migrations/yaml/generateImportSchemas.js";
 import {
   CollectionCreateSchema,
   type CollectionCreate
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import fs from "fs";
 import path from "path";
 

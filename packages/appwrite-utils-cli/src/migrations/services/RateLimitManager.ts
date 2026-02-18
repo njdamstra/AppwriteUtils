@@ -1,5 +1,5 @@
 import pLimit from "p-limit";
-import { logger } from 'appwrite-utils-helpers';
+import { logger } from '@njdamstra/appwrite-utils-helpers';
 
 export interface RateLimitConfig {
   // Data operations

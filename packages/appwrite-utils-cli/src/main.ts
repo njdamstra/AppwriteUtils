@@ -6,14 +6,14 @@ import { InteractiveCLI } from "./interactiveCLI.js";
 import { UtilsController, type SetupOptions } from "./utilsController.js";
 import type { TransferOptions } from "./migrations/transfer.js";
 import { Databases, Storage, type Models } from "node-appwrite";
-import { getClient } from "appwrite-utils-helpers";
+import { getClient } from "@njdamstra/appwrite-utils-helpers";
 import { fetchAllDatabases } from "./databases/methods.js";
 import { setupDirsFiles } from "./utils/setupFiles.js";
 import { fetchAllCollections } from "./collections/methods.js";
-import type { Specification } from "appwrite-utils";
+import type { Specification } from "@njdamstra/appwrite-utils";
 import chalk from "chalk";
 import { listSpecifications } from "./functions/methods.js";
-import { MessageFormatter, logger, AuthenticationError } from "appwrite-utils-helpers";
+import { MessageFormatter, logger, AuthenticationError } from "@njdamstra/appwrite-utils-helpers";
 import { ConfirmationDialogs } from "./shared/confirmationDialogs.js";
 import { SelectionDialogs } from "./shared/selectionDialogs.js";
 import type { SyncSelectionSummary, DatabaseSelection, BucketSelection } from "./shared/selectionDialogs.js";
@@ -704,10 +704,10 @@ async function main() {
 
     if (argv.generateConstants) {
       const { ConstantsGenerator } = await import(
-        "appwrite-utils-helpers"
+        "@njdamstra/appwrite-utils-helpers"
       );
       type SupportedLanguage =
-        import("appwrite-utils-helpers").SupportedLanguage;
+        import("@njdamstra/appwrite-utils-helpers").SupportedLanguage;
 
       if (!controller.config) {
         MessageFormatter.error("No Appwrite configuration found", undefined, {
@@ -805,7 +805,7 @@ async function main() {
         }
 
         const { migrateCollectionsToTables } = await import(
-          "appwrite-utils-helpers"
+          "@njdamstra/appwrite-utils-helpers"
         );
 
         MessageFormatter.info("Starting collections to tables migration...", {
@@ -844,7 +844,7 @@ async function main() {
 
     // List backups if requested
     if (parsedArgv.listBackups) {
-      const { AdapterFactory } = await import("appwrite-utils-helpers");
+      const { AdapterFactory } = await import("@njdamstra/appwrite-utils-helpers");
       const { listBackups } = await import("./shared/backupTracking.js");
 
       if (!controller.config) {
@@ -981,7 +981,7 @@ async function main() {
       const { comprehensiveBackup } = await import(
         "./backups/operations/comprehensiveBackup.js"
       );
-      const { AdapterFactory } = await import("appwrite-utils-helpers");
+      const { AdapterFactory } = await import("@njdamstra/appwrite-utils-helpers");
 
       // Get tracking database ID (interactive prompt if not specified)
       let trackingDatabaseId = parsedArgv.trackingDatabaseId;

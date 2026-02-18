@@ -1,4 +1,4 @@
-import type { AppwriteConfig, Attribute, RelationshipAttribute } from "appwrite-utils";
+import type { AppwriteConfig, Attribute, RelationshipAttribute } from "@njdamstra/appwrite-utils";
 
 /**
  * Represents detailed information about a two-way relationship between collections

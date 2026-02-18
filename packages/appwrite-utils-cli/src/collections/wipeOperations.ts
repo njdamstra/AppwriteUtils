@@ -3,11 +3,11 @@ import {
   Query,
   type Models,
 } from "node-appwrite";
-import type { DatabaseAdapter } from "appwrite-utils-helpers";
-import { tryAwaitWithRetry } from "appwrite-utils-helpers";
-import { MessageFormatter, isRetryableError, isCriticalError } from "appwrite-utils-helpers";
+import type { DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
+import { tryAwaitWithRetry } from "@njdamstra/appwrite-utils-helpers";
+import { MessageFormatter, isRetryableError, isCriticalError } from "@njdamstra/appwrite-utils-helpers";
 import { ProgressManager } from "../shared/progressManager.js";
-import { delay } from "appwrite-utils-helpers";
+import { delay } from "@njdamstra/appwrite-utils-helpers";
 import { chunk } from "es-toolkit";
 import pLimit from "p-limit";
 import { fetchAllCollections } from "./methods.js";

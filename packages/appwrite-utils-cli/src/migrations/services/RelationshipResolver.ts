@@ -3,8 +3,8 @@ import type {
   IdMappings,
   AppwriteConfig,
   CollectionCreate,
-} from "appwrite-utils";
-import { logger } from 'appwrite-utils-helpers';
+} from "@njdamstra/appwrite-utils";
+import { logger } from '@njdamstra/appwrite-utils-helpers';
 import { isEmpty } from "es-toolkit/compat";
 import type { UserMappingService } from "./UserMappingService.js";
 

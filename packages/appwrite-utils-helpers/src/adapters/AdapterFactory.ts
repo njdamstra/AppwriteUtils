@@ -6,7 +6,7 @@
  * and provides a single entry point for all database operations.
  */
 
-import type { AppwriteConfig } from "appwrite-utils";
+import type { AppwriteConfig } from "@njdamstra/appwrite-utils";
 import { detectAppwriteVersionCached, isVersionAtLeast, type ApiMode, type VersionDetectionResult } from "../utils/versionDetection.js";
 import { AdapterError, type DatabaseAdapter } from './DatabaseAdapter.js';
 import { TablesDBAdapter } from './TablesDBAdapter.js';

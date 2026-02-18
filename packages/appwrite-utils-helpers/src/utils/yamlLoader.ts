@@ -12,7 +12,7 @@ import {
 import {
   CollectionCreateSchema,
   type CollectionCreate,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 
 /**
  * Enhanced YAML loader with dual terminology support

@@ -1,6 +1,6 @@
 import cliProgress from "cli-progress";
 import chalk from "chalk";
-import { MessageFormatter } from 'appwrite-utils-helpers';
+import { MessageFormatter } from '@njdamstra/appwrite-utils-helpers';
 
 export interface ProgressOptions {
   title?: string;

@@ -1,9 +1,9 @@
-import type { Index } from "appwrite-utils";
-import type { DatabaseAdapter } from "appwrite-utils-helpers";
+import type { Index } from "@njdamstra/appwrite-utils";
+import type { DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
 import type { Models } from "node-appwrite";
 import { isIndexEqualToIndex } from "../collections/tableOperations.js";
-import { MessageFormatter } from "appwrite-utils-helpers";
-import { delay, tryAwaitWithRetry } from "appwrite-utils-helpers";
+import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
+import { delay, tryAwaitWithRetry } from "@njdamstra/appwrite-utils-helpers";
 
 // Enhanced index operation interfaces
 export interface IndexOperation {

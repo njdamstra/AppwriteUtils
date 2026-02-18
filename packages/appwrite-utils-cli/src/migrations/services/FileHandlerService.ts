@@ -1,8 +1,8 @@
 import path from "path";
 import fs from "fs";
-import type { AttributeMappings, AppwriteConfig } from "appwrite-utils";
+import type { AttributeMappings, AppwriteConfig } from "@njdamstra/appwrite-utils";
 import type { ImportDataActions } from "../importDataActions.js";
-import { logger } from 'appwrite-utils-helpers';
+import { logger } from '@njdamstra/appwrite-utils-helpers';
 import { RateLimitManager } from "./RateLimitManager.js";
 
 /**

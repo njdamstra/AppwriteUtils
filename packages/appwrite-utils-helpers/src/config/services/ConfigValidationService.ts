@@ -1,4 +1,4 @@
-import type { AppwriteConfig } from "appwrite-utils";
+import type { AppwriteConfig } from "@njdamstra/appwrite-utils";
 import {
   validateCollectionsTablesConfig,
   reportValidationResults,

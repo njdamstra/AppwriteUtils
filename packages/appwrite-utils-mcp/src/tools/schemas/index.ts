@@ -6,14 +6,14 @@
 import { z } from 'zod';
 import path from 'path';
 import type { ToolGroupDefinition, ToolContext } from '../ToolGroup.js';
-import type { AppwriteConfig } from 'appwrite-utils';
+import type { AppwriteConfig } from '@njdamstra/appwrite-utils';
 import {
   ConfigManager,
   SchemaGenerator,
   JsonSchemaGenerator,
   PydanticModelGenerator,
   ConstantsGenerator,
-} from 'appwrite-utils-helpers';
+} from '@njdamstra/appwrite-utils-helpers';
 
 // ──────────────────────────────────────────────────
 // INPUT SCHEMAS

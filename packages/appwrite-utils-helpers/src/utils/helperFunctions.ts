@@ -6,7 +6,7 @@ import {
 import fs from "node:fs";
 import path from "node:path";
 // import type { CollectionImportData } from "../migrations/dataLoader.js"; // CLI-only - commented out
-import type { ConfigCollection } from "appwrite-utils";
+import type { ConfigCollection } from "@njdamstra/appwrite-utils";
 import { getClientWithAuth } from "../clients/getClientFromConfig.js";
 import { toPascalCase, toCamelCase } from "./caseConverters.js";
 

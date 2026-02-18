@@ -1,4 +1,4 @@
-import { type AppwriteConfig } from "appwrite-utils";
+import { type AppwriteConfig } from "@njdamstra/appwrite-utils";
 import { Client } from "node-appwrite";
 import { AdapterFactory, type AdapterFactoryResult } from "../adapters/AdapterFactory.js";
 import type { DatabaseAdapter } from "../adapters/DatabaseAdapter.js";

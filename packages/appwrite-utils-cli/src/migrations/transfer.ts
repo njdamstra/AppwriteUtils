@@ -1,4 +1,4 @@
-import { converterFunctions, tryAwaitWithRetry } from "appwrite-utils";
+import { converterFunctions, tryAwaitWithRetry } from "@njdamstra/appwrite-utils";
 import {
   Client,
   Databases,
@@ -9,16 +9,16 @@ import {
   type Models,
 } from "node-appwrite";
 import { InputFile } from "node-appwrite/file";
-import { getAppwriteClient } from "appwrite-utils-helpers";
+import { getAppwriteClient } from "@njdamstra/appwrite-utils-helpers";
 // Legacy attribute helpers retained only for local-to-local flows if needed
-import { parseAttribute } from "appwrite-utils";
+import { parseAttribute } from "@njdamstra/appwrite-utils";
 import chalk from "chalk";
 import { fetchAllCollections } from "../collections/methods.js";
-import { MessageFormatter, mapToCreateAttributeParams } from "appwrite-utils-helpers";
+import { MessageFormatter, mapToCreateAttributeParams } from "@njdamstra/appwrite-utils-helpers";
 import { ProgressManager } from "../shared/progressManager.js";
-import { getClient, getAdapter } from "appwrite-utils-helpers";
+import { getClient, getAdapter } from "@njdamstra/appwrite-utils-helpers";
 import { diffTableColumns } from "../collections/tableOperations.js";
-import { LegacyAdapter, type DatabaseAdapter } from "appwrite-utils-helpers";
+import { LegacyAdapter, type DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
 
 export interface TransferOptions {
   fromDb: Models.Database | undefined;

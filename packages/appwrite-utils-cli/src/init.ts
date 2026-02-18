@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import inquirer from "inquirer";
 import { createEmptyCollection, setupDirsFiles } from "./utils/setupFiles.js";
-import { MessageFormatter } from "appwrite-utils-helpers";
+import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 
-MessageFormatter.banner("Appwrite Utils CLI Tool by Zach Handley", "For more information, visit https://github.com/zachhandley/appwrite-utils");
+MessageFormatter.banner("Appwrite Utils CLI Tool", "For more information, visit https://github.com/njdamstra/AppwriteUtils");
 
 async function main() {
   const answers = await inquirer.prompt([

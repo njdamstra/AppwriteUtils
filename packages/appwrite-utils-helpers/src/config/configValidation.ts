@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { type AppwriteConfig, type CollectionCreate, type TableCreate } from "appwrite-utils";
+import { type AppwriteConfig, type CollectionCreate, type TableCreate } from "@njdamstra/appwrite-utils";
 import { MessageFormatter } from "../shared/messageFormatter.js";
 import chalk from "chalk";
 

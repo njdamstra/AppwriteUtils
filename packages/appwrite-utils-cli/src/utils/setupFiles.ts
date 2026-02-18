@@ -1,14 +1,14 @@
 import { mkdirSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
-import type { AppwriteConfig } from "appwrite-utils";
+import type { AppwriteConfig } from "@njdamstra/appwrite-utils";
 import { findAppwriteConfig } from "./loadConfigs.js";
-import { loadYamlConfig, findYamlConfig, generateYamlConfigTemplate } from "appwrite-utils-helpers";
-import { fetchServerVersion, isVersionAtLeast } from 'appwrite-utils-helpers';
+import { loadYamlConfig, findYamlConfig, generateYamlConfigTemplate } from "@njdamstra/appwrite-utils-helpers";
+import { fetchServerVersion, isVersionAtLeast } from '@njdamstra/appwrite-utils-helpers';
 import { ID } from "node-appwrite";
 import { ulid } from "ulidx";
-import { loadAppwriteProjectConfig, findAppwriteProjectConfig, getProjectDirectoryName, isTablesDBProject } from 'appwrite-utils-helpers';
-import { hasSessionAuth, getSessionAuth } from 'appwrite-utils-helpers';
-import { MessageFormatter } from "appwrite-utils-helpers";
+import { loadAppwriteProjectConfig, findAppwriteProjectConfig, getProjectDirectoryName, isTablesDBProject } from '@njdamstra/appwrite-utils-helpers';
+import { hasSessionAuth, getSessionAuth } from '@njdamstra/appwrite-utils-helpers';
+import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 
 // Example base configuration using types from appwrite-utils
 const baseConfig: AppwriteConfig = {
@@ -87,7 +87,7 @@ const baseConfig: AppwriteConfig = {
 const collectionsConfig: { name: string; content: string }[] = [
   {
     name: "ExampleCollection",
-    content: `import type { CollectionCreate } from "appwrite-utils";
+    content: `import type { CollectionCreate } from "@njdamstra/appwrite-utils";
     
 const ExampleCollection: Partial<CollectionCreate> = {
   name: 'ExampleCollection',
@@ -121,7 +121,7 @@ export default ExampleCollection;`,
 // Define our YAML files
 const configFileExample = `d`;
 
-export const customDefinitionsFile = `import type { ConverterFunctions, ValidationRules, AfterImportActions } from "appwrite-utils";
+export const customDefinitionsFile = `import type { ConverterFunctions, ValidationRules, AfterImportActions } from "@njdamstra/appwrite-utils";
 
 export const customConverterFunctions: ConverterFunctions = {
   // Add your custom converter functions here
@@ -205,7 +205,7 @@ importDefs: []
     MessageFormatter.success(`Created YAML collection: ${collectionFilePath}`, { prefix: "Setup" });
   } else {
     // Create TypeScript collection
-    const emptyCollection = `import type { CollectionCreate } from "appwrite-utils";
+    const emptyCollection = `import type { CollectionCreate } from "@njdamstra/appwrite-utils";
 
 const ${collectionName}: Partial<CollectionCreate> = {
   $id: '${ulid()}',
@@ -334,7 +334,7 @@ export const setupDirsFiles = async (
     if (example) {
       writeFileSync(appwriteConfigFile, configFileExample);
     } else {
-      const baseConfigContent = `import { type AppwriteConfig } from "appwrite-utils";
+      const baseConfigContent = `import { type AppwriteConfig } from "@njdamstra/appwrite-utils";
 
 const appwriteConfig: AppwriteConfig = ${JSON.stringify(baseConfig, null, 2)};
 

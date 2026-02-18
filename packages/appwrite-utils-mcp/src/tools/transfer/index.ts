@@ -6,9 +6,9 @@
 import { z } from 'zod';
 import { Databases, Storage, Query } from 'node-appwrite';
 import type { ToolContext, ToolDefinition, ToolGroupDefinition } from '../ToolGroup.js';
-import { AdapterFactory } from 'appwrite-utils-helpers';
-import type { DatabaseAdapter } from 'appwrite-utils-helpers';
-import { tryAwaitWithRetry } from 'appwrite-utils-helpers';
+import { AdapterFactory } from '@njdamstra/appwrite-utils-helpers';
+import type { DatabaseAdapter } from '@njdamstra/appwrite-utils-helpers';
+import { tryAwaitWithRetry } from '@njdamstra/appwrite-utils-helpers';
 import { ulid } from 'ulidx';
 import { InputFile } from 'node-appwrite/file';
 

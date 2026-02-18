@@ -14,11 +14,11 @@ import {
   type Specification,
   type Runtime as AppwriteUtilsRuntime,
   EventTypeSchema,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import chalk from "chalk";
 import { extract as extractTar } from "tar";
-import { MessageFormatter } from "appwrite-utils-helpers";
-import { expandTildePath, normalizeFunctionName } from 'appwrite-utils-helpers';
+import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
+import { expandTildePath, normalizeFunctionName } from '@njdamstra/appwrite-utils-helpers';
 
 /**
  * Validates and filters events array for Appwrite functions

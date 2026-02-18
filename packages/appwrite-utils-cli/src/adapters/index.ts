@@ -8,4 +8,4 @@
  * available to other packages and reduce code duplication.
  */
 
-export * from 'appwrite-utils-helpers';
+export * from '@njdamstra/appwrite-utils-helpers';

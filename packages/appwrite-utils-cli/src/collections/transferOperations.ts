@@ -4,11 +4,11 @@ import {
   ID,
   Query,
 } from "node-appwrite";
-import { tryAwaitWithRetry, delay, calculateExponentialBackoff, MessageFormatter } from "appwrite-utils-helpers";
+import { tryAwaitWithRetry, delay, calculateExponentialBackoff, MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 import { chunk } from "es-toolkit";
-import type { DatabaseAdapter } from "appwrite-utils-helpers";
-import { isLegacyDatabases } from "appwrite-utils-helpers";
-import { getAdapter } from "appwrite-utils-helpers";
+import type { DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
+import { isLegacyDatabases } from "@njdamstra/appwrite-utils-helpers";
+import { getAdapter } from "@njdamstra/appwrite-utils-helpers";
 
 /**
  * Transfers all documents from one collection to another in a different database

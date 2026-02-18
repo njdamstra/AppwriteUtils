@@ -11,7 +11,7 @@ import type {
   ConfigDatabase,
   CollectionCreate,
   ImportDef,
-} from "appwrite-utils";
+} from "@njdamstra/appwrite-utils";
 import path from "path";
 import fs from "fs";
 import { DataTransformationService } from "./DataTransformationService.js";
@@ -23,12 +23,12 @@ import { RelationshipResolver, type CollectionImportData } from "./RelationshipR
 import type { ImportDataActions } from "../importDataActions.js";
 import type { SetupOptions } from "../../utilsController.js";
 import { UsersController } from "../../users/methods.js";
-import { logger } from 'appwrite-utils-helpers';
-import { MessageFormatter } from 'appwrite-utils-helpers';
+import { logger } from '@njdamstra/appwrite-utils-helpers';
+import { MessageFormatter } from '@njdamstra/appwrite-utils-helpers';
 import { ProgressManager } from "../../shared/progressManager.js";
-import { tryAwaitWithRetry } from "appwrite-utils-helpers";
+import { tryAwaitWithRetry } from "@njdamstra/appwrite-utils-helpers";
 import { updateOperation, findOrCreateOperation } from "../../shared/migrationHelpers.js";
-import { LegacyAdapter } from 'appwrite-utils-helpers';
+import { LegacyAdapter } from '@njdamstra/appwrite-utils-helpers';
 import { resolveAndUpdateRelationships } from "../relationships.js";
 
 // Enhanced rate limiting configuration - now managed by RateLimitManager
