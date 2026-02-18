@@ -23,8 +23,8 @@ const shouldUpdate = (pkgName) =>
   publishList.includes("all") || publishList.includes(pkgName);
 
 const localVersions = {
-  "appwrite-utils": readJson("packages/appwrite-utils/package.json").version,
-  "appwrite-utils-helpers": readJson("packages/appwrite-utils-helpers/package.json").version,
+  "@njdamstra/appwrite-utils": readJson("packages/appwrite-utils/package.json").version,
+  "@njdamstra/appwrite-utils-helpers": readJson("packages/appwrite-utils-helpers/package.json").version,
 };
 
 const getRemoteVersion = (packageName) => {
@@ -53,18 +53,18 @@ const setDepVersion = (pkg, depName, version) => {
 };
 
 const packagesToUpdate = [
-  { name: "appwrite-utils-helpers", path: "packages/appwrite-utils-helpers/package.json" },
-  { name: "appwrite-utils-cli", path: "packages/appwrite-utils-cli/package.json" },
-  { name: "appwrite-utils-mcp", path: "packages/appwrite-utils-mcp/package.json" },
+  { name: "@njdamstra/appwrite-utils-helpers", path: "packages/appwrite-utils-helpers/package.json" },
+  { name: "@njdamstra/appwrite-utils-cli", path: "packages/appwrite-utils-cli/package.json" },
+  { name: "@njdamstra/appwrite-utils-mcp", path: "packages/appwrite-utils-mcp/package.json" },
 ];
 
 for (const pkgInfo of packagesToUpdate) {
   const pkg = readJson(pkgInfo.path);
   if (shouldUpdate(pkgInfo.name)) {
-    const utilsVersion = resolveDepVersion("appwrite-utils");
-    const helpersVersion = resolveDepVersion("appwrite-utils-helpers");
-    setDepVersion(pkg, "appwrite-utils", utilsVersion);
-    setDepVersion(pkg, "appwrite-utils-helpers", helpersVersion);
+    const utilsVersion = resolveDepVersion("@njdamstra/appwrite-utils");
+    const helpersVersion = resolveDepVersion("@njdamstra/appwrite-utils-helpers");
+    setDepVersion(pkg, "@njdamstra/appwrite-utils", utilsVersion);
+    setDepVersion(pkg, "@njdamstra/appwrite-utils-helpers", helpersVersion);
     writeJson(pkgInfo.path, pkg);
   }
 }
