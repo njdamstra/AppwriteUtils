@@ -32,6 +32,10 @@ interface ColumnOperationPlan {
 // Property configuration for different column types
 const MUTABLE_PROPERTIES = {
   string: ["required", "default", "size", "array"],
+  varchar: ["required", "default", "size", "array"],
+  text: ["required", "default", "array"],
+  mediumtext: ["required", "default", "array"],
+  longtext: ["required", "default", "array"],
   integer: ["required", "default", "min", "max", "array"],
   float: ["required", "default", "min", "max", "array"],
   double: ["required", "default", "min", "max", "array"],
@@ -41,11 +45,18 @@ const MUTABLE_PROPERTIES = {
   ip: ["required", "default", "array"],
   url: ["required", "default", "array"],
   enum: ["required", "default", "elements", "array"],
+  point: ["required", "default"],
+  line: ["required", "default"],
+  polygon: ["required", "default"],
   relationship: ["required", "default"],
 } as const;
 
 const IMMUTABLE_PROPERTIES = {
   string: ["encrypt", "key"],
+  varchar: ["encrypt", "key"],
+  text: ["encrypt", "key"],
+  mediumtext: ["encrypt", "key"],
+  longtext: ["encrypt", "key"],
   integer: ["encrypt", "key"],
   float: ["encrypt", "key"],
   double: ["encrypt", "key"],
@@ -55,11 +66,18 @@ const IMMUTABLE_PROPERTIES = {
   ip: ["key"],
   url: ["key"],
   enum: ["key"],
+  point: ["key"],
+  line: ["key"],
+  polygon: ["key"],
   relationship: ["key", "relatedCollection", "relationType", "twoWay", "twoWayKey", "onDelete"],
 } as const;
 
 const TYPE_CHANGE_REQUIRES_RECREATE = [
   "string",
+  "varchar",
+  "text",
+  "mediumtext",
+  "longtext",
   "integer",
   "float",
   "double",
@@ -69,6 +87,9 @@ const TYPE_CHANGE_REQUIRES_RECREATE = [
   "ip",
   "url",
   "enum",
+  "point",
+  "line",
+  "polygon",
   "relationship",
 ];
 
@@ -117,6 +138,13 @@ export function normalizeAttributeToComparable(attr: Attribute): ComparableColum
     base.size = (attr as any).size ?? 255;
     base.encrypt = !!((attr as any).encrypt);
   }
+  if (t === 'varchar') {
+    base.size = (attr as any).size ?? 255;
+    base.encrypt = !!((attr as any).encrypt);
+  }
+  if (t === 'text' || t === 'mediumtext' || t === 'longtext') {
+    base.encrypt = !!((attr as any).encrypt);
+  }
   if (t === 'integer' || t === 'float' || t === 'double') {
     const min = toNumber((attr as any).min);
     const max = toNumber((attr as any).max);
@@ -160,6 +188,13 @@ export function normalizeColumnToComparable(col: any): ComparableColumn {
 
   if (t === 'string') {
     base.size = typeof col?.size === 'number' ? col.size : undefined;
+    base.encrypt = !!col?.encrypt;
+  }
+  if (t === 'varchar') {
+    base.size = typeof col?.size === 'number' ? col.size : undefined;
+    base.encrypt = !!col?.encrypt;
+  }
+  if (t === 'text' || t === 'mediumtext' || t === 'longtext') {
     base.encrypt = !!col?.encrypt;
   }
   if (t === 'integer' || t === 'float' || t === 'double') {

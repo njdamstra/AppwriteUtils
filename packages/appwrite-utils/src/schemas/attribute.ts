@@ -205,6 +205,70 @@ export const enumAttributeSchema = extendBase({
   xdefault: z.string().nullish().describe("The default value of the attribute"),
 });
 
+// String subtypes (Appwrite 1.7+)
+export const varcharAttributeSchema = extendBase({
+  type: z.literal("varchar").describe("The type of the attribute"),
+  size: z.number().describe("The max length of the varchar attribute"),
+  xdefault: z.string().nullish().describe("The default value of the attribute"),
+  encrypt: z
+    .boolean()
+    .optional()
+    .describe("Whether the attribute is encrypted or not"),
+});
+
+export const textAttributeSchema = extendBase({
+  type: z.literal("text").describe("The type of the attribute"),
+  xdefault: z.string().nullish().describe("The default value of the attribute"),
+  encrypt: z
+    .boolean()
+    .optional()
+    .describe("Whether the attribute is encrypted or not"),
+});
+
+export const mediumtextAttributeSchema = extendBase({
+  type: z.literal("mediumtext").describe("The type of the attribute"),
+  xdefault: z.string().nullish().describe("The default value of the attribute"),
+  encrypt: z
+    .boolean()
+    .optional()
+    .describe("Whether the attribute is encrypted or not"),
+});
+
+export const longtextAttributeSchema = extendBase({
+  type: z.literal("longtext").describe("The type of the attribute"),
+  xdefault: z.string().nullish().describe("The default value of the attribute"),
+  encrypt: z
+    .boolean()
+    .optional()
+    .describe("Whether the attribute is encrypted or not"),
+});
+
+// Geospatial types (Appwrite 1.7+)
+export const pointAttributeSchema = extendBase({
+  type: z.literal("point").describe("The type of the attribute"),
+  xdefault: z
+    .array(z.number())
+    .length(2)
+    .nullish()
+    .describe("The default value [longitude, latitude]"),
+});
+
+export const lineAttributeSchema = extendBase({
+  type: z.literal("line").describe("The type of the attribute"),
+  xdefault: z
+    .array(z.array(z.number()).length(2))
+    .nullish()
+    .describe("The default value as array of [lon, lat] points"),
+});
+
+export const polygonAttributeSchema = extendBase({
+  type: z.literal("polygon").describe("The type of the attribute"),
+  xdefault: z
+    .array(z.array(z.array(z.number()).length(2)))
+    .nullish()
+    .describe("The default value as array of rings of [lon, lat] points"),
+});
+
 export const relationshipAttributeSchema = extendBase({
   type: z.literal("relationship").describe("The type of the attribute"),
   relatedCollection: z
@@ -267,6 +331,10 @@ export const relationshipAttributeSchema = extendBase({
 
 const attributeVariants = z.discriminatedUnion("type", [
   stringAttributeSchema,
+  varcharAttributeSchema,
+  textAttributeSchema,
+  mediumtextAttributeSchema,
+  longtextAttributeSchema,
   integerAttributeSchema,
   doubleAttributeSchema,
   floatAttributeSchema,
@@ -276,6 +344,9 @@ const attributeVariants = z.discriminatedUnion("type", [
   ipAttributeSchema,
   urlAttributeSchema,
   enumAttributeSchema,
+  pointAttributeSchema,
+  lineAttributeSchema,
+  polygonAttributeSchema,
   relationshipAttributeSchema,
 ]);
 
@@ -284,6 +355,7 @@ const attributeDefaultValueSchema = z.union([
   z.number(),
   z.boolean(),
   z.null(),
+  z.array(z.any()),
 ]);
 
 const attributeNormalizerSchema = z
@@ -471,6 +543,10 @@ export const attributeSchema =
 
 export type BaseAttribute = z.infer<typeof baseAttributeSchema>;
 export type StringAttribute = z.infer<typeof stringAttributeSchema>;
+export type VarcharAttribute = z.infer<typeof varcharAttributeSchema>;
+export type TextAttribute = z.infer<typeof textAttributeSchema>;
+export type MediumtextAttribute = z.infer<typeof mediumtextAttributeSchema>;
+export type LongtextAttribute = z.infer<typeof longtextAttributeSchema>;
 export type IntegerAttribute = z.infer<typeof integerAttributeSchema>;
 export type DoubleAttribute = z.infer<typeof doubleAttributeSchema>;
 export type FloatAttribute = z.infer<typeof floatAttributeSchema>;
@@ -480,6 +556,9 @@ export type EmailAttribute = z.infer<typeof emailAttributeSchema>;
 export type IpAttribute = z.infer<typeof ipAttributeSchema>;
 export type UrlAttribute = z.infer<typeof urlAttributeSchema>;
 export type EnumAttribute = z.infer<typeof enumAttributeSchema>;
+export type PointAttribute = z.infer<typeof pointAttributeSchema>;
+export type LineAttribute = z.infer<typeof lineAttributeSchema>;
+export type PolygonAttribute = z.infer<typeof polygonAttributeSchema>;
 export type RelationshipAttribute = z.infer<typeof relationshipAttributeSchema>;
 
 export const attributesSchema = z.array(attributeSchema);

@@ -552,10 +552,23 @@ export class PydanticModelGenerator {
     let base: string;
     switch (t) {
       case 'string':
+      case 'varchar':
+      case 'text':
+      case 'mediumtext':
+      case 'longtext':
       case 'email':
       case 'ip':
       case 'url':
         base = 'str';
+        break;
+      case 'point':
+        base = 'list[float]';
+        break;
+      case 'line':
+        base = 'list[list[float]]';
+        break;
+      case 'polygon':
+        base = 'list[list[list[float]]]';
         break;
       case 'integer':
         base = 'int';

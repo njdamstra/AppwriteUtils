@@ -536,6 +536,47 @@ export default appwriteConfig;
           baseSchemaCode += ".nullish()";
         }
         break;
+      case "varchar":
+        baseSchemaCode = "z.string()";
+        if ((finalAttribute as any).size) {
+          baseSchemaCode += `.max(${(finalAttribute as any).size}, "Maximum length of ${(finalAttribute as any).size} characters exceeded")`;
+        }
+        if ((finalAttribute as any).xdefault !== undefined) {
+          baseSchemaCode += `.default("${(finalAttribute as any).xdefault}")`;
+        }
+        if (!attribute.required && !attribute.array) {
+          baseSchemaCode += ".nullish()";
+        }
+        break;
+      case "text":
+      case "mediumtext":
+      case "longtext":
+        baseSchemaCode = "z.string()";
+        if ((finalAttribute as any).xdefault !== undefined) {
+          baseSchemaCode += `.default("${(finalAttribute as any).xdefault}")`;
+        }
+        if (!attribute.required && !attribute.array) {
+          baseSchemaCode += ".nullish()";
+        }
+        break;
+      case "point":
+        baseSchemaCode = "z.tuple([z.number(), z.number()])";
+        if (!attribute.required && !attribute.array) {
+          baseSchemaCode += ".nullish()";
+        }
+        break;
+      case "line":
+        baseSchemaCode = "z.array(z.tuple([z.number(), z.number()]))";
+        if (!attribute.required && !attribute.array) {
+          baseSchemaCode += ".nullish()";
+        }
+        break;
+      case "polygon":
+        baseSchemaCode = "z.array(z.array(z.tuple([z.number(), z.number()])))";
+        if (!attribute.required && !attribute.array) {
+          baseSchemaCode += ".nullish()";
+        }
+        break;
       case "integer":
         baseSchemaCode = "z.number().int()";
         if (finalAttribute.min !== undefined) {

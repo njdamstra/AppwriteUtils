@@ -1,5 +1,5 @@
 import { indexSchema, type Index } from "@njdamstra/appwrite-utils";
-import { Databases, IndexType, Query, type Models } from "node-appwrite";
+import { Databases, IndexType, OrderBy, Query, type Models } from "node-appwrite";
 import type { DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
 import { delay, tryAwaitWithRetry, calculateExponentialBackoff, isLegacyDatabases, MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 
@@ -327,10 +327,10 @@ export const createOrUpdateIndex = async (
       index.key,
       index.type as IndexType,
       index.attributes,
-      orders
+      orders as OrderBy[]
     );
   }
-  
+
   return newIndex;
 };
 

@@ -7,7 +7,7 @@
  * older Appwrite instances.
  */
 
-import { Client, Databases, IndexType, Query, type Models, RelationshipType, RelationMutate } from "node-appwrite";
+import { Client, Databases, IndexType, OrderBy, Query, type Models, RelationshipType, RelationMutate } from "node-appwrite";
 import { chunk } from "es-toolkit";
 import {
   BaseAdapter,
@@ -327,7 +327,7 @@ export class LegacyAdapter extends BaseAdapter {
         params.key,
         params.type as IndexType,
         params.attributes,
-        params.orders || []
+        (params.orders || []) as OrderBy[]
       );
 
       return { data: result };
@@ -472,6 +472,85 @@ export class LegacyAdapter extends BaseAdapter {
             required: params.required ?? false,
             xdefault: params.default,
             array: params.array ?? false
+          });
+          break;
+
+        case 'varchar':
+          result = await this.databases.createVarcharAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            size: params.size || 255,
+            required: params.required ?? false,
+            xdefault: params.default,
+            array: params.array ?? false,
+            encrypt: params.encrypt ?? false
+          });
+          break;
+
+        case 'text':
+          result = await this.databases.createTextAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? false,
+            xdefault: params.default,
+            array: params.array ?? false,
+            encrypt: params.encrypt ?? false
+          });
+          break;
+
+        case 'mediumtext':
+          result = await this.databases.createMediumtextAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? false,
+            xdefault: params.default,
+            array: params.array ?? false,
+            encrypt: params.encrypt ?? false
+          });
+          break;
+
+        case 'longtext':
+          result = await this.databases.createLongtextAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? false,
+            xdefault: params.default,
+            array: params.array ?? false,
+            encrypt: params.encrypt ?? false
+          });
+          break;
+
+        case 'point':
+          result = await this.databases.createPointAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? false,
+            xdefault: params.default,
+          });
+          break;
+
+        case 'line':
+          result = await this.databases.createLineAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? false,
+            xdefault: params.default,
+          });
+          break;
+
+        case 'polygon':
+          result = await this.databases.createPolygonAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? false,
+            xdefault: params.default,
           });
           break;
 
@@ -632,6 +711,91 @@ export class LegacyAdapter extends BaseAdapter {
             xdefault: params.default !== undefined ? params.default : urlAttr.default
           });
           break;
+
+        case 'varchar': {
+          const varcharAttr = existingAttr as any;
+          result = await this.databases.updateVarcharAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? varcharAttr.required,
+            xdefault: params.default !== undefined ? params.default : varcharAttr.default,
+            size: params.size !== undefined ? params.size : varcharAttr.size,
+          });
+          break;
+        }
+
+        case 'text': {
+          const textAttr = existingAttr as any;
+          result = await this.databases.updateTextAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? textAttr.required,
+            xdefault: params.default !== undefined ? params.default : textAttr.default,
+          });
+          break;
+        }
+
+        case 'mediumtext': {
+          const mediumtextAttr = existingAttr as any;
+          result = await this.databases.updateMediumtextAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? mediumtextAttr.required,
+            xdefault: params.default !== undefined ? params.default : mediumtextAttr.default,
+          });
+          break;
+        }
+
+        case 'longtext': {
+          const longtextAttr = existingAttr as any;
+          result = await this.databases.updateLongtextAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? longtextAttr.required,
+            xdefault: params.default !== undefined ? params.default : longtextAttr.default,
+          });
+          break;
+        }
+
+        case 'point': {
+          const pointAttr = existingAttr as any;
+          result = await this.databases.updatePointAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? pointAttr.required,
+            xdefault: params.default !== undefined ? params.default : pointAttr.default,
+          });
+          break;
+        }
+
+        case 'line': {
+          const lineAttr = existingAttr as any;
+          result = await this.databases.updateLineAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? lineAttr.required,
+            xdefault: params.default !== undefined ? params.default : lineAttr.default,
+          });
+          break;
+        }
+
+        case 'polygon': {
+          const polygonAttr = existingAttr as any;
+          result = await this.databases.updatePolygonAttribute({
+            databaseId: params.databaseId,
+            collectionId: params.tableId,
+            key: params.key,
+            required: params.required ?? polygonAttr.required,
+            xdefault: params.default !== undefined ? params.default : polygonAttr.default,
+          });
+          break;
+        }
 
         case 'relationship':
           // Relationship attributes have different update method signature

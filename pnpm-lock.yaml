@@ -102,8 +102,8 @@ importers:
         specifier: ^0.10.3
         version: 0.10.3
       node-appwrite:
-        specifier: ^20.2.1
-        version: 20.3.0
+        specifier: ^22.1.2
+        version: 22.1.2
       p-limit:
         specifier: ^6.2.0
         version: 6.2.0
@@ -184,8 +184,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.1
       node-appwrite:
-        specifier: ^20.2.1
-        version: 20.3.0
+        specifier: ^22.1.2
+        version: 22.1.2
       p-limit:
         specifier: ^6.2.0
         version: 6.2.0
@@ -230,8 +230,8 @@ importers:
         specifier: workspace:*
         version: link:../appwrite-utils-helpers
       node-appwrite:
-        specifier: ^20.2.1
-        version: 20.3.0
+        specifier: ^22.1.2
+        version: 22.1.2
       ulidx:
         specifier: ^2.4.1
         version: 2.4.1
@@ -892,6 +892,9 @@ packages:
   baseline-browser-mapping@2.9.19:
     resolution: {integrity: sha512-ipDqC8FrAl/76p2SSWKSI+H9tFwm7vYqXQrItCuiVPt26Km0jS+NzSsBWAaBusvSbQcfJG+JitdMm+wZAgTYqg==}
     hasBin: true
+
+  bignumber.js@9.3.1:
+    resolution: {integrity: sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ==}
 
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
@@ -1601,6 +1604,9 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
+  json-bigint@1.0.0:
+    resolution: {integrity: sha512-SiPv/8VpZuWbvLSMtTDU8hEfrZWg/mH/nV/b4o0CYbSxu1UIQPLdwKOCIyLQX+VIPO5vrLX3i8qtqFyhdPSUSQ==}
+
   json-parse-even-better-errors@2.3.1:
     resolution: {integrity: sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==}
 
@@ -1740,8 +1746,8 @@ packages:
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
-  node-appwrite@20.3.0:
-    resolution: {integrity: sha512-vaxlpkNTtjkccyngwc9HRSwQQasZ/CJri6KMZ62mlDAM1YdvOgqIM8EYJwvhx/fiHdyjfxithFcmnvzUR9TGTQ==}
+  node-appwrite@22.1.2:
+    resolution: {integrity: sha512-iK30EBV+/rkU2jbHR+i2BK+7axlxjuF/G7X290jGwOc7Wa/qkkK67icgU4M+XJgCUsInha4ZeH0dWs7Gw0RT9A==}
 
   node-fetch-native-with-agent@1.7.2:
     resolution: {integrity: sha512-5MaOOCuJEvcckoz7/tjdx1M6OusOY6Xc5f459IaruGStWnKzlI1qpNgaAwmn4LmFYcsSlj+jBMk84wmmRxfk5g==}
@@ -3030,6 +3036,8 @@ snapshots:
 
   baseline-browser-mapping@2.9.19: {}
 
+  bignumber.js@9.3.1: {}
+
   bl@4.1.0:
     dependencies:
       buffer: 5.7.1
@@ -3934,6 +3942,10 @@ snapshots:
 
   jsesc@3.1.0: {}
 
+  json-bigint@1.0.0:
+    dependencies:
+      bignumber.js: 9.3.1
+
   json-parse-even-better-errors@2.3.1: {}
 
   json-schema-traverse@1.0.0: {}
@@ -4048,8 +4060,9 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  node-appwrite@20.3.0:
+  node-appwrite@22.1.2:
     dependencies:
+      json-bigint: 1.0.0
       node-fetch-native-with-agent: 1.7.2
 
   node-fetch-native-with-agent@1.7.2: {}

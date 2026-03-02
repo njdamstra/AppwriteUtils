@@ -593,6 +593,74 @@ const createLegacyAttribute = async (
         attribute.array || false
       );
       break;
+    case "varchar":
+      await db.createVarcharAttribute(
+        dbId,
+        collectionId,
+        attribute.key,
+        (attribute as any).size || 255,
+        attribute.required || false,
+        (attribute as any).xdefault !== undefined && !attribute.required
+          ? (attribute as any).xdefault
+          : undefined,
+        attribute.array || false,
+        (attribute as any).encrypt
+      );
+      break;
+    case "text":
+    case "mediumtext":
+    case "longtext": {
+      const createFn = attribute.type === "text"
+        ? db.createTextAttribute.bind(db)
+        : attribute.type === "mediumtext"
+          ? db.createMediumtextAttribute.bind(db)
+          : db.createLongtextAttribute.bind(db);
+      await createFn(
+        dbId,
+        collectionId,
+        attribute.key,
+        attribute.required || false,
+        (attribute as any).xdefault !== undefined && !attribute.required
+          ? (attribute as any).xdefault
+          : undefined,
+        attribute.array || false,
+        (attribute as any).encrypt
+      );
+      break;
+    }
+    case "point":
+      await db.createPointAttribute(
+        dbId,
+        collectionId,
+        attribute.key,
+        attribute.required || false,
+        (attribute as any).xdefault !== undefined && !attribute.required
+          ? (attribute as any).xdefault
+          : undefined
+      );
+      break;
+    case "line":
+      await db.createLineAttribute(
+        dbId,
+        collectionId,
+        attribute.key,
+        attribute.required || false,
+        (attribute as any).xdefault !== undefined && !attribute.required
+          ? (attribute as any).xdefault
+          : undefined
+      );
+      break;
+    case "polygon":
+      await db.createPolygonAttribute(
+        dbId,
+        collectionId,
+        attribute.key,
+        attribute.required || false,
+        (attribute as any).xdefault !== undefined && !attribute.required
+          ? (attribute as any).xdefault
+          : undefined
+      );
+      break;
     case "relationship":
       await db.createRelationshipAttribute(
         dbId,
@@ -615,6 +683,10 @@ const createLegacyAttribute = async (
           type: (attribute as any).type,
           supportedTypes: [
             "string",
+            "varchar",
+            "text",
+            "mediumtext",
+            "longtext",
             "integer",
             "double",
             "float",
@@ -624,6 +696,9 @@ const createLegacyAttribute = async (
             "ip",
             "url",
             "enum",
+            "point",
+            "line",
+            "polygon",
             "relationship",
           ],
           operation: "createLegacyAttribute",
@@ -764,6 +839,70 @@ const updateLegacyAttribute = async (
         collectionId,
         attribute.key,
         (attribute as any).elements || [],
+        attribute.required || false,
+        !attribute.required && (attribute as any).xdefault !== undefined
+          ? (attribute as any).xdefault
+          : null
+      );
+      break;
+    case "varchar":
+      await db.updateVarcharAttribute(
+        dbId,
+        collectionId,
+        attribute.key,
+        attribute.required || false,
+        !attribute.required && (attribute as any).xdefault !== undefined
+          ? (attribute as any).xdefault
+          : null,
+        (attribute as any).size
+      );
+      break;
+    case "text":
+    case "mediumtext":
+    case "longtext": {
+      const updateFn = attribute.type === "text"
+        ? db.updateTextAttribute.bind(db)
+        : attribute.type === "mediumtext"
+          ? db.updateMediumtextAttribute.bind(db)
+          : db.updateLongtextAttribute.bind(db);
+      await updateFn(
+        dbId,
+        collectionId,
+        attribute.key,
+        attribute.required || false,
+        !attribute.required && (attribute as any).xdefault !== undefined
+          ? (attribute as any).xdefault
+          : null
+      );
+      break;
+    }
+    case "point":
+      await db.updatePointAttribute(
+        dbId,
+        collectionId,
+        attribute.key,
+        attribute.required || false,
+        !attribute.required && (attribute as any).xdefault !== undefined
+          ? (attribute as any).xdefault
+          : null
+      );
+      break;
+    case "line":
+      await db.updateLineAttribute(
+        dbId,
+        collectionId,
+        attribute.key,
+        attribute.required || false,
+        !attribute.required && (attribute as any).xdefault !== undefined
+          ? (attribute as any).xdefault
+          : null
+      );
+      break;
+    case "polygon":
+      await db.updatePolygonAttribute(
+        dbId,
+        collectionId,
+        attribute.key,
         attribute.required || false,
         !attribute.required && (attribute as any).xdefault !== undefined
           ? (attribute as any).xdefault
@@ -1048,6 +1187,14 @@ const getComparableFields = (type: string): string[] => {
     case "string":
       return [...baseFields, "size", "encrypt"];
 
+    case "varchar":
+      return [...baseFields, "size", "encrypt"];
+
+    case "text":
+    case "mediumtext":
+    case "longtext":
+      return [...baseFields, "encrypt"];
+
     case "integer":
     case "double":
     case "float":
@@ -1055,6 +1202,11 @@ const getComparableFields = (type: string): string[] => {
 
     case "enum":
       return [...baseFields, "elements"];
+
+    case "point":
+    case "line":
+    case "polygon":
+      return baseFields;
 
     case "relationship":
       return [

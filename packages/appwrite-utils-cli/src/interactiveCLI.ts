@@ -92,7 +92,7 @@ export class InteractiveCLI {
   async run(): Promise<void> {
     MessageFormatter.banner(
       "Appwrite Utils CLI",
-      "Welcome to Appwrite Utils CLI Tool by Zach Handley"
+      "Welcome to Appwrite Utils CLI Tool"
     );
     MessageFormatter.info(
       "For more information, visit https://github.com/njdamstra/AppwriteUtils"
@@ -1069,7 +1069,7 @@ export class InteractiveCLI {
         compression: bucketCompressionType as Compression,
         encryption: bucketEncryption,
         antivirus: bucketAntivirus,
-      },
+      } as any,
       bucketId.length > 0 ? bucketId : ulid()
     );
   }
@@ -1111,7 +1111,7 @@ export class InteractiveCLI {
       name: db.name,
       enabled: true,
       type: "tablesdb" as DatabaseType,
-    }));
+    } as Models.Database));
   }
 
 

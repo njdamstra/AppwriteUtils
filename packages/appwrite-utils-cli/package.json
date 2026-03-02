@@ -1,7 +1,7 @@
 {
   "name": "@njdamstra/appwrite-utils-cli",
   "description": "Appwrite Utility Functions to help with database management, data conversion, data import, migrations, and much more. Meant to be used as a CLI tool, I do not recommend installing this in frontend environments.",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "main": "dist/main.js",
   "type": "module",
   "repository": {
@@ -53,7 +53,7 @@
     "jszip": "^3.10.1",
     "luxon": "^3.6.1",
     "nanostores": "^0.10.3",
-    "node-appwrite": "^20.2.1",
+    "node-appwrite": "^22.1.2",
     "p-limit": "^6.2.0",
     "papaparse": "^5.5.3",
     "tar": "^7.4.3",

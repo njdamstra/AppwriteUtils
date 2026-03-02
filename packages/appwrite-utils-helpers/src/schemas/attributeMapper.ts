@@ -52,6 +52,45 @@ export function mapToCreateAttributeParams(
         encrypt: !!encrypt,
       };
 
+    case "varchar":
+      return {
+        databaseId: base.databaseId,
+        tableId: base.tableId,
+        key: attr.key,
+        type,
+        size: (attr as any).size ?? 255,
+        required,
+        default: xdefault,
+        array,
+        encrypt: !!encrypt,
+      };
+
+    case "text":
+    case "mediumtext":
+    case "longtext":
+      return {
+        databaseId: base.databaseId,
+        tableId: base.tableId,
+        key: attr.key,
+        type,
+        required,
+        default: xdefault,
+        array,
+        encrypt: !!encrypt,
+      };
+
+    case "point":
+    case "line":
+    case "polygon":
+      return {
+        databaseId: base.databaseId,
+        tableId: base.tableId,
+        key: attr.key,
+        type,
+        required,
+        default: xdefault,
+      };
+
     case "integer":
       return {
         databaseId: base.databaseId,
@@ -183,8 +222,10 @@ export function mapToUpdateAttributeParams(
     setIfDefined("default", (attr as any).xdefault as any);
   }
   setIfDefined("array", (attr as any).array);
-  // encrypt only applies to string types
-  if (type === "string") setIfDefined("encrypt", (attr as any).encrypt);
+  // encrypt applies to string-like types
+  if (type === "string" || type === "varchar" || type === "text" || type === "mediumtext" || type === "longtext") {
+    setIfDefined("encrypt", (attr as any).encrypt);
+  }
 
   // Numeric normalization
   const toNum = (n: any) => (n === null || n === undefined ? undefined : (Number(n)));
@@ -200,6 +241,17 @@ export function mapToUpdateAttributeParams(
   switch (type) {
     case "string":
       setIfDefined("size", (attr as any).size);
+      break;
+    case "varchar":
+      setIfDefined("size", (attr as any).size);
+      break;
+    case "text":
+    case "mediumtext":
+    case "longtext":
+      break;
+    case "point":
+    case "line":
+    case "polygon":
       break;
     case "integer":
     case "float":

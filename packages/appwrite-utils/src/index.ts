@@ -44,6 +44,34 @@ export {
   stringAttributeSchema,
 } from "./schemas/stringAttribute.js";
 export {
+  type VarcharAttribute,
+  varcharAttributeSchema,
+} from "./schemas/varcharAttribute.js";
+export {
+  type TextAttribute,
+  textAttributeSchema,
+} from "./schemas/textAttribute.js";
+export {
+  type MediumtextAttribute,
+  mediumtextAttributeSchema,
+} from "./schemas/mediumtextAttribute.js";
+export {
+  type LongtextAttribute,
+  longtextAttributeSchema,
+} from "./schemas/longtextAttribute.js";
+export {
+  type PointAttribute,
+  pointAttributeSchema,
+} from "./schemas/pointAttribute.js";
+export {
+  type LineAttribute,
+  lineAttributeSchema,
+} from "./schemas/lineAttribute.js";
+export {
+  type PolygonAttribute,
+  polygonAttributeSchema,
+} from "./schemas/polygonAttribute.js";
+export {
   type RelationshipAttribute,
   relationshipAttributeSchema,
 } from "./schemas/relationshipAttribute.js";

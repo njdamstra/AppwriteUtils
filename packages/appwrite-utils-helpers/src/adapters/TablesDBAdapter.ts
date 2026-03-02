@@ -6,7 +6,7 @@
  * and returns Models.Row instead of Models.Document.
  */
 
-import { IndexType, Query, RelationMutate, RelationshipType, type Models } from "node-appwrite";
+import { IndexType, OrderBy, Query, RelationMutate, RelationshipType, type Models } from "node-appwrite";
 import { chunk } from "es-toolkit";
 import {
   BaseAdapter,
@@ -284,7 +284,7 @@ export class TablesDBAdapter extends BaseAdapter {
         key: params.key,
         type: params.type as IndexType,
         columns: params.attributes,
-        orders: params.orders || [],
+        orders: (params.orders || []) as OrderBy[],
         lengths: params.lengths || [],
       });
       return { data: result };
@@ -447,6 +447,85 @@ export class TablesDBAdapter extends BaseAdapter {
             required: params.required ?? false,
             xdefault: params.default,
             array: params.array ?? false
+          });
+          break;
+
+        case 'varchar':
+          result = await this.tablesDB.createVarcharColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            size: params.size || 255,
+            required: params.required ?? false,
+            xdefault: params.default,
+            array: params.array ?? false,
+            encrypt: params.encrypt ?? false
+          });
+          break;
+
+        case 'text':
+          result = await this.tablesDB.createTextColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required ?? false,
+            xdefault: params.default,
+            array: params.array ?? false,
+            encrypt: params.encrypt ?? false
+          });
+          break;
+
+        case 'mediumtext':
+          result = await this.tablesDB.createMediumtextColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required ?? false,
+            xdefault: params.default,
+            array: params.array ?? false,
+            encrypt: params.encrypt ?? false
+          });
+          break;
+
+        case 'longtext':
+          result = await this.tablesDB.createLongtextColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required ?? false,
+            xdefault: params.default,
+            array: params.array ?? false,
+            encrypt: params.encrypt ?? false
+          });
+          break;
+
+        case 'point':
+          result = await this.tablesDB.createPointColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required ?? false,
+            xdefault: params.default,
+          });
+          break;
+
+        case 'line':
+          result = await this.tablesDB.createLineColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required ?? false,
+            xdefault: params.default,
+          });
+          break;
+
+        case 'polygon':
+          result = await this.tablesDB.createPolygonColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required ?? false,
+            xdefault: params.default,
           });
           break;
 
@@ -615,6 +694,91 @@ export class TablesDBAdapter extends BaseAdapter {
             xdefault: params.default !== undefined ? params.default : urlColumn.default
           });
           break;
+
+        case 'varchar': {
+          const varcharColumn = column as any;
+          result = await this.tablesDB.updateVarcharColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required !== undefined ? params.required : varcharColumn.required,
+            xdefault: params.default !== undefined ? params.default : varcharColumn.default,
+            size: params.size !== undefined ? params.size : varcharColumn.size,
+          });
+          break;
+        }
+
+        case 'text': {
+          const textColumn = column as any;
+          result = await this.tablesDB.updateTextColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required !== undefined ? params.required : textColumn.required,
+            xdefault: params.default !== undefined ? params.default : textColumn.default,
+          });
+          break;
+        }
+
+        case 'mediumtext': {
+          const mediumtextColumn = column as any;
+          result = await this.tablesDB.updateMediumtextColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required !== undefined ? params.required : mediumtextColumn.required,
+            xdefault: params.default !== undefined ? params.default : mediumtextColumn.default,
+          });
+          break;
+        }
+
+        case 'longtext': {
+          const longtextColumn = column as any;
+          result = await this.tablesDB.updateLongtextColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required !== undefined ? params.required : longtextColumn.required,
+            xdefault: params.default !== undefined ? params.default : longtextColumn.default,
+          });
+          break;
+        }
+
+        case 'point': {
+          const pointColumn = column as any;
+          result = await this.tablesDB.updatePointColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required !== undefined ? params.required : pointColumn.required,
+            xdefault: params.default !== undefined ? params.default : pointColumn.default,
+          });
+          break;
+        }
+
+        case 'line': {
+          const lineColumn = column as any;
+          result = await this.tablesDB.updateLineColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required !== undefined ? params.required : lineColumn.required,
+            xdefault: params.default !== undefined ? params.default : lineColumn.default,
+          });
+          break;
+        }
+
+        case 'polygon': {
+          const polygonColumn = column as any;
+          result = await this.tablesDB.updatePolygonColumn({
+            databaseId: params.databaseId,
+            tableId: params.tableId,
+            key: params.key,
+            required: params.required !== undefined ? params.required : polygonColumn.required,
+            xdefault: params.default !== undefined ? params.default : polygonColumn.default,
+          });
+          break;
+        }
 
         case 'relationship':
           const relationshipColumn = column as Models.ColumnRelationship;

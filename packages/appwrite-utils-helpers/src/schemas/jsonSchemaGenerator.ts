@@ -94,6 +94,45 @@ export class JsonSchemaGenerator {
         }
         break;
 
+      case "varchar":
+        schema.type = "string";
+        if ((attribute as any).size) {
+          schema.maxLength = (attribute as any).size;
+        }
+        break;
+
+      case "text":
+      case "mediumtext":
+      case "longtext":
+        schema.type = "string";
+        break;
+
+      case "point":
+        schema.type = "array";
+        schema.items = { type: "number" };
+        (schema as any).minItems = 2;
+        (schema as any).maxItems = 2;
+        break;
+
+      case "line":
+        schema.type = "array";
+        schema.items = {
+          type: "array",
+          items: { type: "number" },
+        };
+        break;
+
+      case "polygon":
+        schema.type = "array";
+        schema.items = {
+          type: "array",
+          items: {
+            type: "array",
+            items: { type: "number" },
+          },
+        };
+        break;
+
       case "integer":
         schema.type = "integer";
         if (attribute.min !== undefined) {
