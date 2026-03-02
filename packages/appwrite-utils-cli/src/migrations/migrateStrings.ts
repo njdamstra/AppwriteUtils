@@ -382,6 +382,32 @@ export async function executeMigrationPlan(
       }
     }
 
+    // Restore required flags after all attributes in this collection are done.
+    // This must happen AFTER all migrations to avoid partial-update validation
+    // errors (Appwrite rejects updateRow if a required attribute is missing
+    // from the payload, even for partial updates).
+    const completedRequired = entries.filter((e) => {
+      const cp = findCheckpointEntry(checkpoint, e);
+      return cp?.phase === "completed" && e.isRequired;
+    });
+    for (const entry of completedRequired) {
+      try {
+        await tryAwaitWithRetry(() =>
+          adapter.updateAttribute({
+            databaseId: entry.databaseId,
+            tableId: entry.collectionId,
+            key: entry.attributeKey,
+            required: true,
+          } as any)
+        );
+      } catch {
+        MessageFormatter.info(
+          `  Warning: could not set ${entry.attributeKey} back to required`,
+          { prefix: "Execute" }
+        );
+      }
+    }
+
     // After collection completes, offer to update local YAML
     const successInGroup = entries.filter((e) => {
       const cp = findCheckpointEntry(checkpoint, e);
@@ -630,25 +656,8 @@ async function migrateOneAttribute(
   }
 
   // Step 9: Mark completed
-  // If the original attribute was required, update it now (after data is in place)
-  if (entry.isRequired) {
-    try {
-      await tryAwaitWithRetry(() =>
-        adapter.updateAttribute({
-          databaseId,
-          tableId: collectionId,
-          key: attributeKey,
-          required: true,
-        } as any)
-      );
-    } catch {
-      // Non-fatal — attribute is migrated, just not set back to required
-      MessageFormatter.info(
-        `    Warning: could not set ${attributeKey} back to required`,
-        { prefix: "Migrate" }
-      );
-    }
-  }
+  // NOTE: required flag is restored AFTER all attributes in the collection
+  // are migrated, to avoid partial-update validation errors on other attributes.
   advance("completed");
 }
 
