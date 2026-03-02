@@ -338,6 +338,40 @@ export async function executeMigrationPlan(
       continue;
     }
 
+    // Temporarily set ALL required attributes in this collection to optional.
+    // Appwrite rejects partial updateRow calls if a required attribute is missing
+    // from the payload — even if the field exists in the document. This affects
+    // every data-copy step during migration.
+    const schemaRes = await tryAwaitWithRetry(() =>
+      adapter.getTable({ databaseId: first.databaseId, tableId: first.collectionId })
+    );
+    const allAttrs: any[] =
+      schemaRes?.data?.attributes || schemaRes?.data?.columns || [];
+    const originallyRequired = allAttrs
+      .filter((a: any) => a.required === true && a.status === "available")
+      .map((a: any) => a.key as string);
+
+    if (originallyRequired.length > 0) {
+      MessageFormatter.info(
+        `  Temporarily setting ${originallyRequired.length} required attribute(s) to optional...`,
+        { prefix: "Execute" }
+      );
+      for (const key of originallyRequired) {
+        try {
+          await tryAwaitWithRetry(() =>
+            adapter.updateAttribute({
+              databaseId: first.databaseId,
+              tableId: first.collectionId,
+              key,
+              required: false,
+            } as any)
+          );
+        } catch {
+          // Non-fatal — attribute might not support updating required
+        }
+      }
+    }
+
     // Migrate each attribute in this collection
     for (const entry of entries) {
       const cpEntry = getOrCreateCheckpointEntry(checkpoint, entry);
@@ -382,29 +416,30 @@ export async function executeMigrationPlan(
       }
     }
 
-    // Restore required flags after all attributes in this collection are done.
-    // This must happen AFTER all migrations to avoid partial-update validation
-    // errors (Appwrite rejects updateRow if a required attribute is missing
-    // from the payload, even for partial updates).
-    const completedRequired = entries.filter((e) => {
-      const cp = findCheckpointEntry(checkpoint, e);
-      return cp?.phase === "completed" && e.isRequired;
-    });
-    for (const entry of completedRequired) {
-      try {
-        await tryAwaitWithRetry(() =>
-          adapter.updateAttribute({
-            databaseId: entry.databaseId,
-            tableId: entry.collectionId,
-            key: entry.attributeKey,
-            required: true,
-          } as any)
-        );
-      } catch {
-        MessageFormatter.info(
-          `  Warning: could not set ${entry.attributeKey} back to required`,
-          { prefix: "Execute" }
-        );
+    // Restore required flags for ALL originally-required attributes.
+    // This covers both migrated attributes (recreated as optional) and
+    // non-migrated attributes (temporarily set to optional above).
+    if (originallyRequired.length > 0) {
+      MessageFormatter.info(
+        `  Restoring ${originallyRequired.length} required attribute(s)...`,
+        { prefix: "Execute" }
+      );
+      for (const key of originallyRequired) {
+        try {
+          await tryAwaitWithRetry(() =>
+            adapter.updateAttribute({
+              databaseId: first.databaseId,
+              tableId: first.collectionId,
+              key,
+              required: true,
+            } as any)
+          );
+        } catch {
+          MessageFormatter.info(
+            `  Warning: could not restore required flag for ${key}`,
+            { prefix: "Execute" }
+          );
+        }
       }
     }
 
