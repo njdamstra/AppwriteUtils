@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { MessageFormatter } from './messageFormatter.js';
 import type { AppwriteConfig, Attribute } from '@njdamstra/appwrite-utils';
+import { TEXT_TYPE_MAX_LENGTHS } from './attributeMapper.js';
 
 // Embedded template for base Pydantic model (always written as base.py)
 const BASE_PYDANTIC_TEMPLATE = `"""
@@ -517,7 +518,7 @@ export class PydanticModelGenerator {
     const fields: string[] = [];
     for (const attr of attributes) {
       if (!attr || !attr.key) continue;
-      const ann = this.mapAttributeToPythonType(attr, typingImports);
+      const ann = this.mapAttributeToPythonType(attr, typingImports, typeImports);
       const required = !!(attr as any).required;
       const isArray = !!(attr as any).array;
       const defaultInitializer = this.defaultInitializer(attr, required, isArray);
@@ -546,21 +547,26 @@ export class PydanticModelGenerator {
     return ' = None';
   }
 
-  private mapAttributeToPythonType(attr: Attribute, typingImports: Set<string>): string {
+  private mapAttributeToPythonType(attr: Attribute, typingImports: Set<string>, typeImports: Set<string>): string {
     const t = String((attr as any).type || '').toLowerCase();
     const isArray = !!(attr as any).array;
     let base: string;
     switch (t) {
       case 'string':
       case 'varchar':
-      case 'text':
-      case 'mediumtext':
-      case 'longtext':
       case 'email':
       case 'ip':
       case 'url':
         base = 'str';
         break;
+      case 'text':
+      case 'mediumtext':
+      case 'longtext': {
+        const maxLen = TEXT_TYPE_MAX_LENGTHS[t];
+        base = `constr(max_length=${maxLen})`;
+        typeImports.add('from pydantic import constr');
+        break;
+      }
       case 'point':
         base = 'list[float]';
         break;

@@ -9,6 +9,7 @@ import {
   type SimpleRelationship
 } from "./relationshipExtractor.js";
 import { MessageFormatter } from "./messageFormatter.js";
+import { TEXT_TYPE_MAX_LENGTHS } from "./attributeMapper.js";
 
 export interface JsonSchemaProperty {
   type: string | string[];
@@ -105,6 +106,7 @@ export class JsonSchemaGenerator {
       case "mediumtext":
       case "longtext":
         schema.type = "string";
+        schema.maxLength = TEXT_TYPE_MAX_LENGTHS[(attribute as any).type];
         break;
 
       case "point":

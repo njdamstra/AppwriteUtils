@@ -24,6 +24,7 @@ import {
   MigrationCheckpointSchema,
   suggestTargetType,
   generateBackupKey,
+  generateArchiveKey,
 } from "./migrateStringsTypes.js";
 
 // ────────────────────────────────────────────────────────
@@ -273,8 +274,27 @@ export async function executeMigrationPlan(
   }
   const checkpoint = loadOrCreateCheckpoint(checkpointPath, options.planPath);
 
-  const batchSize = options.batchSize || 100;
-  const batchDelayMs = options.batchDelayMs || 50;
+  // Detect old-version checkpoints that used 2-copy flow
+  if (!checkpoint.version || checkpoint.version < 2) {
+    const hasProgress = checkpoint.entries.some(
+      (e) =>
+        e.phase !== "pending" &&
+        e.phase !== "completed" &&
+        e.phase !== "failed"
+    );
+    if (hasProgress) {
+      MessageFormatter.warning(
+        "Checkpoint from older migration version detected with in-progress entries. " +
+          "Use --fresh to restart with optimized rename-based flow.",
+        { prefix: "Checkpoint" }
+      );
+    }
+    checkpoint.version = 2;
+    saveCheckpoint(checkpoint, checkpointPath);
+  }
+
+  const batchSize = options.batchSize || 500;
+  const batchDelayMs = options.batchDelayMs || 0;
 
   // Group by database/collection
   const groups = new Map<string, MigrationPlanEntry[]>();
@@ -484,7 +504,7 @@ export async function executeMigrationPlan(
 }
 
 // ────────────────────────────────────────────────────────
-// Single attribute migration (9 phases)
+// Single attribute migration (rename-based, 6 steps)
 // ────────────────────────────────────────────────────────
 
 interface MigrateOneOptions {
@@ -511,20 +531,24 @@ async function migrateOneAttribute(
     saveCheckpoint(checkpoint, checkpointPath);
   };
 
-  // Step 1: Create backup attribute
+  // Step 1: Create backup attribute as TARGET type directly
   if (phaseIndex(cpEntry.phase) < phaseIndex("backup_created")) {
-    MessageFormatter.info(`    Creating backup attribute ${backupKey}...`, {
-      prefix: "Migrate",
-    });
-    await createAttributeIfNotExists(adapter, {
+    MessageFormatter.info(
+      `    Creating backup attribute ${backupKey} as ${targetType}...`,
+      { prefix: "Migrate" }
+    );
+    const createParams: Record<string, any> = {
       databaseId,
       tableId: collectionId,
       key: backupKey,
-      type: "string", // backup keeps original type
-      size: entry.currentSize,
-      required: false, // always optional for backup
+      type: targetType,
+      required: false,
       array: entry.isArray,
-    });
+    };
+    if (targetType === "varchar" && targetSize) {
+      createParams.size = targetSize;
+    }
+    await createAttributeIfNotExists(adapter, createParams as any);
     const available = await waitForAttribute(
       adapter,
       databaseId,
@@ -535,7 +559,7 @@ async function migrateOneAttribute(
     advance("backup_created");
   }
 
-  // Step 2: Copy data to backup
+  // Step 2: Copy data to backup (only data copy needed)
   if (phaseIndex(cpEntry.phase) < phaseIndex("data_copied_to_backup")) {
     MessageFormatter.info(`    Copying data to backup ${backupKey}...`, {
       prefix: "Migrate",
@@ -564,13 +588,14 @@ async function migrateOneAttribute(
     advance("data_verified_backup");
   }
 
-  // Step 4: Delete indexes + original attribute
-  if (phaseIndex(cpEntry.phase) < phaseIndex("original_deleted")) {
-    // Save and delete affected indexes
+  // Step 4: Clear original attribute name (delete or archive)
+  if (phaseIndex(cpEntry.phase) < phaseIndex("original_cleared")) {
+    // Delete indexes first (required before delete or rename)
     if (entry.indexesAffected.length > 0) {
-      MessageFormatter.info(`    Removing ${entry.indexesAffected.length} affected index(es)...`, {
-        prefix: "Migrate",
-      });
+      MessageFormatter.info(
+        `    Removing ${entry.indexesAffected.length} affected index(es)...`,
+        { prefix: "Migrate" }
+      );
       await saveAndDeleteIndexes(
         adapter,
         databaseId,
@@ -581,85 +606,70 @@ async function migrateOneAttribute(
       saveCheckpoint(checkpoint, checkpointPath);
     }
 
-    MessageFormatter.info(`    Deleting original attribute ${attributeKey}...`, {
-      prefix: "Migrate",
-    });
-    await tryAwaitWithRetry(() =>
-      adapter.deleteAttribute({
+    if (opts.keepBackups) {
+      // ARCHIVE: rename original → og_X (preserves original data under new name)
+      const archiveKey = generateArchiveKey(attributeKey);
+      MessageFormatter.info(
+        `    Archiving original ${attributeKey} → ${archiveKey}...`,
+        { prefix: "Migrate" }
+      );
+      await tryAwaitWithRetry(() =>
+        adapter.updateAttribute({
+          databaseId,
+          tableId: collectionId,
+          key: attributeKey,
+          newKey: archiveKey,
+          required: false,
+        })
+      );
+      await waitForAttribute(adapter, databaseId, collectionId, archiveKey);
+    } else {
+      // DELETE: remove original attribute entirely
+      MessageFormatter.info(
+        `    Deleting original attribute ${attributeKey}...`,
+        { prefix: "Migrate" }
+      );
+      await tryAwaitWithRetry(() =>
+        adapter.deleteAttribute({
+          databaseId,
+          tableId: collectionId,
+          key: attributeKey,
+        })
+      );
+      await waitForAttributeGone(
+        adapter,
         databaseId,
-        tableId: collectionId,
-        key: attributeKey,
-      })
-    );
-    await waitForAttributeGone(adapter, databaseId, collectionId, attributeKey);
-    advance("original_deleted");
+        collectionId,
+        attributeKey
+      );
+    }
+    advance("original_cleared");
   }
 
-  // Step 5: Create new attribute with target type
-  if (phaseIndex(cpEntry.phase) < phaseIndex("new_attr_created")) {
+  // Step 5: Rename backup to original name
+  if (phaseIndex(cpEntry.phase) < phaseIndex("backup_renamed")) {
     MessageFormatter.info(
-      `    Creating new attribute ${attributeKey} as ${targetType}...`,
+      `    Renaming ${backupKey} → ${attributeKey}...`,
       { prefix: "Migrate" }
     );
-    const createParams: Record<string, any> = {
-      databaseId,
-      tableId: collectionId,
-      key: attributeKey,
-      type: targetType,
-      required: false, // create as optional first — data needs to be copied back
-      array: entry.isArray,
-    };
-    if (targetType === "varchar" && targetSize) {
-      createParams.size = targetSize;
-    }
-    if (entry.hasDefault && entry.defaultValue !== undefined) {
-      createParams.default = entry.defaultValue;
-    }
-
-    await createAttributeIfNotExists(adapter, createParams as any);
-    const available = await waitForAttribute(
-      adapter,
-      databaseId,
-      collectionId,
-      attributeKey
+    await tryAwaitWithRetry(() =>
+      adapter.updateAttribute({
+        databaseId,
+        tableId: collectionId,
+        key: backupKey,
+        newKey: attributeKey,
+        required: false,
+        ...(entry.hasDefault && entry.defaultValue !== undefined
+          ? { default: entry.defaultValue }
+          : {}),
+      })
     );
-    if (!available)
-      throw new Error(`New attribute ${attributeKey} stuck after creation`);
-    advance("new_attr_created");
+    await waitForAttribute(adapter, databaseId, collectionId, attributeKey);
+    advance("backup_renamed");
   }
 
-  // Step 6: Copy data back from backup
-  if (phaseIndex(cpEntry.phase) < phaseIndex("data_copied_back")) {
-    MessageFormatter.info(`    Copying data back from backup...`, {
-      prefix: "Migrate",
-    });
-    await copyAttributeData(
-      adapter,
-      databaseId,
-      collectionId,
-      backupKey,
-      attributeKey,
-      opts.batchSize,
-      opts.batchDelayMs
-    );
-    advance("data_copied_back");
-  }
-
-  // Step 7: Verify final data
-  if (phaseIndex(cpEntry.phase) < phaseIndex("data_verified_final")) {
-    await verifyDataCopy(
-      adapter,
-      databaseId,
-      collectionId,
-      backupKey,
-      attributeKey
-    );
-    advance("data_verified_final");
-  }
-
-  // Step 8: Recreate indexes + delete backup
-  if (phaseIndex(cpEntry.phase) < phaseIndex("backup_deleted")) {
-    // Recreate indexes
+  // Step 6: Recreate indexes
+  if (phaseIndex(cpEntry.phase) < phaseIndex("indexes_recreated")) {
     if (cpEntry.storedIndexes.length > 0) {
       MessageFormatter.info(
         `    Recreating ${cpEntry.storedIndexes.length} index(es)...`,
@@ -667,30 +677,10 @@ async function migrateOneAttribute(
       );
       await recreateIndexes(adapter, databaseId, collectionId, cpEntry);
     }
-
-    // Delete backup (unless keepBackups)
-    if (!opts.keepBackups) {
-      MessageFormatter.info(`    Deleting backup attribute ${backupKey}...`, {
-        prefix: "Migrate",
-      });
-      await tryAwaitWithRetry(() =>
-        adapter.deleteAttribute({
-          databaseId,
-          tableId: collectionId,
-          key: backupKey,
-        })
-      );
-      await waitForAttributeGone(
-        adapter,
-        databaseId,
-        collectionId,
-        backupKey
-      );
-    }
-    advance("backup_deleted");
+    advance("indexes_recreated");
   }
 
-  // Step 9: Mark completed
+  // Mark completed
   // NOTE: required flag is restored AFTER all attributes in the collection
   // are migrated, to avoid partial-update validation errors on other attributes.
   advance("completed");
@@ -728,7 +718,7 @@ async function copyAttributeData(
       })
     : undefined;
 
-  const limit = pLimit(5);
+  const limit = pLimit(25);
 
   while (true) {
     const queries: string[] = [Query.limit(batchSize)];
@@ -764,6 +754,16 @@ async function copyAttributeData(
 
     totalCopied += docs.length;
     lastId = docs[docs.length - 1].$id;
+
+    // Appwrite caps result.total at 5000 — adjust progress bar if we exceed it
+    if (progress && totalDocs && totalCopied > totalDocs) {
+      // Estimate remaining: if we haven't hit the last page, assume at least one more batch
+      const estimatedTotal = docs.length < batchSize
+        ? totalCopied
+        : totalCopied + batchSize;
+      progress.setTotal(estimatedTotal);
+      totalDocs = estimatedTotal;
+    }
     progress?.update(totalCopied);
 
     if (docs.length < batchSize) break; // last page
@@ -1000,6 +1000,7 @@ function loadOrCreateCheckpoint(
 
   const now = new Date().toISOString();
   return {
+    version: 2,
     planFile,
     startedAt: now,
     lastUpdatedAt: now,
@@ -1061,11 +1062,9 @@ const PHASE_ORDER: CheckpointPhase[] = [
   "backup_created",
   "data_copied_to_backup",
   "data_verified_backup",
-  "original_deleted",
-  "new_attr_created",
-  "data_copied_back",
-  "data_verified_final",
-  "backup_deleted",
+  "original_cleared",
+  "backup_renamed",
+  "indexes_recreated",
   "completed",
 ];
 
@@ -1080,8 +1079,13 @@ function phaseIndex(phase: CheckpointPhase): number {
 
 function printDryRunSummary(plan: MigrationPlan): void {
   console.log("");
-  console.log(chalk.bold("Dry Run — What Would Happen:"));
+  console.log(chalk.bold("Dry Run — What Would Happen (rename-based flow):"));
   console.log(chalk.gray("─".repeat(50)));
+  console.log(
+    chalk.dim(
+      "  Flow: create mig_X (target type) → copy data → delete/archive original → rename mig_X → X"
+    )
+  );
 
   const groups = new Map<string, MigrationPlanEntry[]>();
   for (const entry of plan.entries) {

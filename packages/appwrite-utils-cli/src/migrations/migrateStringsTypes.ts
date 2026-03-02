@@ -62,13 +62,17 @@ export const CheckpointPhase = z.enum([
   "backup_created",
   "data_copied_to_backup",
   "data_verified_backup",
+  "original_cleared",
+  "backup_renamed",
+  "indexes_recreated",
+  "completed",
+  "failed",
+  // Legacy phases (kept for Zod validation of old v1 checkpoints)
   "original_deleted",
   "new_attr_created",
   "data_copied_back",
   "data_verified_final",
   "backup_deleted",
-  "completed",
-  "failed",
 ]);
 export type CheckpointPhase = z.infer<typeof CheckpointPhase>;
 
@@ -96,6 +100,7 @@ export const CheckpointEntrySchema = z.object({
 export type CheckpointEntry = z.infer<typeof CheckpointEntrySchema>;
 
 export const MigrationCheckpointSchema = z.object({
+  version: z.number().default(1),
   planFile: z.string(),
   startedAt: z.string(),
   lastUpdatedAt: z.string(),
@@ -148,6 +153,19 @@ export function generateBackupKey(originalKey: string): string {
   // Truncate + 4-char hash for uniqueness: m_ + orig + _ + hash(4)
   const hash = simpleHash(originalKey);
   const TRUNC_PREFIX = "m_";
+  const maxOrigLen = MAX_KEY_LENGTH - TRUNC_PREFIX.length - 1 - 4;
+  return `${TRUNC_PREFIX}${originalKey.slice(0, maxOrigLen)}_${hash}`;
+}
+
+const ARCHIVE_PREFIX = "og_";
+
+export function generateArchiveKey(originalKey: string): string {
+  const candidate = `${ARCHIVE_PREFIX}${originalKey}`;
+  if (candidate.length <= MAX_KEY_LENGTH) {
+    return candidate;
+  }
+  const hash = simpleHash(originalKey);
+  const TRUNC_PREFIX = "o_";
   const maxOrigLen = MAX_KEY_LENGTH - TRUNC_PREFIX.length - 1 - 4;
   return `${TRUNC_PREFIX}${originalKey.slice(0, maxOrigLen)}_${hash}`;
 }

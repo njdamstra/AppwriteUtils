@@ -590,6 +590,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : stringColumn.required,
             xdefault: params.default !== undefined ? params.default : stringColumn.default,
             size: params.size !== undefined ? params.size : stringColumn.size,
@@ -602,9 +603,9 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : integerColumn.required,
             xdefault: params.default !== undefined ? params.default : integerColumn.default,
-            // Only send min/max when explicitly provided to avoid resubmitting extreme values
             ...(params.min !== undefined ? { min: params.min } : {}),
             ...(params.max !== undefined ? { max: params.max } : {}),
           });
@@ -617,6 +618,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : floatColumn.required,
             xdefault: params.default !== undefined ? params.default : floatColumn.default,
             ...(params.min !== undefined ? { min: params.min } : {}),
@@ -630,6 +632,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : booleanColumn.required,
             xdefault: params.default !== undefined ? params.default : booleanColumn.default
           });
@@ -641,6 +644,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : datetimeColumn.required,
             xdefault: params.default !== undefined ? params.default : datetimeColumn.default
           });
@@ -652,6 +656,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : emailColumn.required,
             xdefault: params.default !== undefined ? params.default : emailColumn.default
           });
@@ -667,6 +672,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : enumColumn.required,
             xdefault: params.default !== undefined ? params.default : enumColumn.default,
             elements: nextElements
@@ -679,6 +685,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : ipColumn.required,
             xdefault: params.default !== undefined ? params.default : ipColumn.default
           });
@@ -690,6 +697,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : urlColumn.required,
             xdefault: params.default !== undefined ? params.default : urlColumn.default
           });
@@ -701,6 +709,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : varcharColumn.required,
             xdefault: params.default !== undefined ? params.default : varcharColumn.default,
             size: params.size !== undefined ? params.size : varcharColumn.size,
@@ -714,6 +723,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : textColumn.required,
             xdefault: params.default !== undefined ? params.default : textColumn.default,
           });
@@ -726,6 +736,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : mediumtextColumn.required,
             xdefault: params.default !== undefined ? params.default : mediumtextColumn.default,
           });
@@ -738,6 +749,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : longtextColumn.required,
             xdefault: params.default !== undefined ? params.default : longtextColumn.default,
           });
@@ -750,6 +762,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : pointColumn.required,
             xdefault: params.default !== undefined ? params.default : pointColumn.default,
           });
@@ -762,6 +775,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : lineColumn.required,
             xdefault: params.default !== undefined ? params.default : lineColumn.default,
           });
@@ -774,6 +788,7 @@ export class TablesDBAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             tableId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required !== undefined ? params.required : polygonColumn.required,
             xdefault: params.default !== undefined ? params.default : polygonColumn.default,
           });

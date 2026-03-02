@@ -20,6 +20,7 @@ import {
 } from "./relationshipExtractor.js";
 import { resolveSchemaDir } from "../paths/pathResolvers.js";
 import { MessageFormatter } from "../shared/messageFormatter.js";
+import { TEXT_TYPE_MAX_LENGTHS } from "./attributeMapper.js";
 
 export class SchemaGenerator {
   private relationshipMap = new Map<string, RelationshipDetail[]>();
@@ -550,8 +551,12 @@ export default appwriteConfig;
         break;
       case "text":
       case "mediumtext":
-      case "longtext":
+      case "longtext": {
         baseSchemaCode = "z.string()";
+        const maxLen = TEXT_TYPE_MAX_LENGTHS[finalAttribute.type];
+        if (maxLen) {
+          baseSchemaCode += `.max(${maxLen}, "Maximum length of ${maxLen} characters exceeded")`;
+        }
         if ((finalAttribute as any).xdefault !== undefined) {
           baseSchemaCode += `.default("${(finalAttribute as any).xdefault}")`;
         }
@@ -559,6 +564,7 @@ export default appwriteConfig;
           baseSchemaCode += ".nullish()";
         }
         break;
+      }
       case "point":
         baseSchemaCode = "z.tuple([z.number(), z.number()])";
         if (!attribute.required && !attribute.array) {

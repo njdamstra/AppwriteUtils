@@ -1,6 +1,12 @@
 import type { CreateAttributeParams, UpdateAttributeParams } from "../adapters/DatabaseAdapter.js";
 import type { Attribute } from "@njdamstra/appwrite-utils";
 
+export const TEXT_TYPE_MAX_LENGTHS: Record<string, number> = {
+  text: 16_383,
+  mediumtext: 4_194_303,
+  longtext: 1_073_741_823,
+};
+
 function ensureNumber(n: any): number | undefined {
   if (n === null || n === undefined) return undefined;
   const num = Number(n);

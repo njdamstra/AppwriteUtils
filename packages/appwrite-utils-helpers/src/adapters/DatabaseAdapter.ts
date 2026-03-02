@@ -147,6 +147,7 @@ export interface UpdateAttributeParams {
   databaseId: string;
   tableId: string;
   key: string;
+  newKey?: string;
   type?: string;
   required?: boolean;
   default?: any;

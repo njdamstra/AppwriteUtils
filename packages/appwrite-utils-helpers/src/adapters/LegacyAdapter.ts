@@ -607,6 +607,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? stringAttr.required,
             xdefault: params.default !== undefined ? params.default : stringAttr.default,
             size: stringAttr.size
@@ -619,9 +620,9 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? integerAttr.required,
             xdefault: params.default !== undefined ? params.default : integerAttr.default,
-            // Only include when explicitly provided to avoid resubmitting extreme values
             ...(params.min !== undefined ? { min: params.min } : {}),
             ...(params.max !== undefined ? { max: params.max } : {}),
           });
@@ -634,6 +635,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? floatAttr.required,
             xdefault: params.default !== undefined ? params.default : floatAttr.default,
             ...(params.min !== undefined ? { min: params.min } : {}),
@@ -647,6 +649,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? booleanAttr.required,
             xdefault: params.default !== undefined ? params.default : booleanAttr.default
           });
@@ -658,6 +661,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? datetimeAttr.required,
             xdefault: params.default !== undefined ? params.default : datetimeAttr.default
           });
@@ -669,6 +673,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? emailAttr.required,
             xdefault: params.default !== undefined ? params.default : emailAttr.default
           });
@@ -684,6 +689,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             elements: nextElements,
             required: params.required ?? enumAttr.required,
             xdefault: params.default !== undefined ? params.default : enumAttr.default
@@ -696,6 +702,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? ipAttr.required,
             xdefault: params.default !== undefined ? params.default : ipAttr.default
           });
@@ -707,6 +714,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? urlAttr.required,
             xdefault: params.default !== undefined ? params.default : urlAttr.default
           });
@@ -718,6 +726,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? varcharAttr.required,
             xdefault: params.default !== undefined ? params.default : varcharAttr.default,
             size: params.size !== undefined ? params.size : varcharAttr.size,
@@ -731,6 +740,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? textAttr.required,
             xdefault: params.default !== undefined ? params.default : textAttr.default,
           });
@@ -743,6 +753,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? mediumtextAttr.required,
             xdefault: params.default !== undefined ? params.default : mediumtextAttr.default,
           });
@@ -755,6 +766,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? longtextAttr.required,
             xdefault: params.default !== undefined ? params.default : longtextAttr.default,
           });
@@ -767,6 +779,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? pointAttr.required,
             xdefault: params.default !== undefined ? params.default : pointAttr.default,
           });
@@ -779,6 +792,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? lineAttr.required,
             xdefault: params.default !== undefined ? params.default : lineAttr.default,
           });
@@ -791,6 +805,7 @@ export class LegacyAdapter extends BaseAdapter {
             databaseId: params.databaseId,
             collectionId: params.tableId,
             key: params.key,
+            ...(params.newKey ? { newKey: params.newKey } : {}),
             required: params.required ?? polygonAttr.required,
             xdefault: params.default !== undefined ? params.default : polygonAttr.default,
           });
