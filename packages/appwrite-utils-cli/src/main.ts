@@ -82,6 +82,14 @@ interface CliOptions {
   importFile?: string;
   targetDb?: string;
   targetTable?: string;
+  // String attribute migration
+  migrateStringsAnalyze?: boolean;
+  migrateStringsExecute?: string;
+  migrateStringsOutput?: string;
+  migrateStringsDbIds?: string;
+  migrateStringsKeepBackups?: boolean;
+  migrateStringsDryRun?: boolean;
+  migrateStringsFresh?: boolean;
 }
 
 type ParsedArgv = ArgumentsCamelCase<CliOptions>;
@@ -621,6 +629,42 @@ const argv = yargs(hideBin(process.argv))
     type: "string",
     description: "Target table ID for --importFile (prompted if omitted)",
   })
+  .option("migrateStringsAnalyze", {
+    alias: ["migrate-strings-analyze"],
+    type: "boolean",
+    description: "Analyze local configs and generate a string-to-varchar/text migration plan (YAML)",
+  })
+  .option("migrateStringsExecute", {
+    alias: ["migrate-strings-execute"],
+    type: "string",
+    description: "Execute a string migration plan from the given YAML path",
+  })
+  .option("migrateStringsOutput", {
+    alias: ["migrate-strings-output"],
+    type: "string",
+    description: "Output path for the migration plan (default: ./migrate-strings-plan.yaml)",
+  })
+  .option("migrateStringsDbIds", {
+    alias: ["migrate-strings-db-ids"],
+    type: "string",
+    description: "Comma-separated database IDs to include in analysis (default: all)",
+  })
+  .option("migrateStringsKeepBackups", {
+    alias: ["migrate-strings-keep-backups"],
+    type: "boolean",
+    default: true,
+    description: "Keep backup attributes after migration (default: true)",
+  })
+  .option("migrateStringsDryRun", {
+    alias: ["migrate-strings-dry-run"],
+    type: "boolean",
+    description: "Dry run — show what would happen without making changes",
+  })
+  .option("migrateStringsFresh", {
+    alias: ["migrate-strings-fresh"],
+    type: "boolean",
+    description: "Ignore existing checkpoint and start migration fresh",
+  })
   .parse() as ParsedArgv;
 
 async function main() {
@@ -838,6 +882,50 @@ async function main() {
           { prefix: "Migration" }
         );
         process.exit(1);
+      }
+      return;
+    }
+
+    // String attribute migration (analyze or execute)
+    if (argv.migrateStringsAnalyze || argv.migrateStringsExecute) {
+      const { analyzeStringAttributes, executeMigrationPlan } = await import(
+        "./migrations/migrateStrings.js"
+      );
+
+      if (argv.migrateStringsAnalyze) {
+        if (!controller.adapter) {
+          MessageFormatter.error(
+            "No database adapter available. Ensure config has valid credentials.",
+            undefined,
+            { prefix: "Migration" }
+          );
+          return;
+        }
+        const databaseIds = argv.migrateStringsDbIds
+          ? argv.migrateStringsDbIds.split(",").map((s: string) => s.trim()).filter(Boolean)
+          : undefined;
+        await analyzeStringAttributes(controller.adapter, controller.config, {
+          outputPath: argv.migrateStringsOutput,
+          databaseIds,
+        });
+      } else if (argv.migrateStringsExecute) {
+        if (!controller.adapter) {
+          MessageFormatter.error(
+            "No database adapter available. Ensure config has valid credentials.",
+            undefined,
+            { prefix: "Migration" }
+          );
+          return;
+        }
+        const results = await executeMigrationPlan(controller.adapter, {
+          planPath: argv.migrateStringsExecute,
+          keepBackups: argv.migrateStringsKeepBackups ?? true,
+          dryRun: argv.migrateStringsDryRun ?? false,
+          freshRun: argv.migrateStringsFresh ?? false,
+        });
+        if (results.failed > 0) {
+          process.exit(1);
+        }
       }
       return;
     }

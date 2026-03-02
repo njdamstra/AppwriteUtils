@@ -46,6 +46,7 @@ import { storageCommands } from "./cli/commands/storageCommands.js";
 import { transferCommands } from "./cli/commands/transferCommands.js";
 import { schemaCommands } from "./cli/commands/schemaCommands.js";
 import { importFileCommands } from "./cli/commands/importFileCommands.js";
+import { migrateCommands } from "./cli/commands/migrateCommands.js";
 
 enum CHOICES {
   MIGRATE_CONFIG = "🔄 Migrate TypeScript config to YAML (.appwrite structure)",
@@ -71,6 +72,7 @@ enum CHOICES {
   RELOAD_CONFIG = "🔄 Reload configuration files",
   UPDATE_FUNCTION_SPEC = "⚙️ Update function specifications",
   MANAGE_BUCKETS = "🪣 Manage storage buckets",
+  MIGRATE_STRINGS = "🔄 Migrate string attributes to varchar/text types",
   EXIT = "👋 Exit",
 }
 
@@ -202,6 +204,10 @@ export class InteractiveCLI {
           break;
         case CHOICES.MANAGE_BUCKETS:
           await this.manageBuckets();
+          break;
+        case CHOICES.MIGRATE_STRINGS:
+          await this.initControllerIfNeeded();
+          await migrateCommands.migrateStrings(this);
           break;
         case CHOICES.EXIT:
           MessageFormatter.success("Goodbye!");
