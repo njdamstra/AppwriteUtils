@@ -12,7 +12,8 @@ import { setupDirsFiles } from "./utils/setupFiles.js";
 import { fetchAllCollections } from "./collections/methods.js";
 import type { Specification } from "@njdamstra/appwrite-utils";
 import chalk from "chalk";
-import { listSpecifications } from "./functions/methods.js";
+import { listSpecifications, listFunctions } from "./functions/methods.js";
+import { listBuckets } from "./storage/methods.js";
 import { MessageFormatter, logger, AuthenticationError } from "@njdamstra/appwrite-utils-helpers";
 import { ConfirmationDialogs } from "./shared/confirmationDialogs.js";
 import { SelectionDialogs } from "./shared/selectionDialogs.js";
@@ -78,6 +79,7 @@ interface CliOptions {
   schemaFormat?: 'zod' | 'json' | 'pydantic' | 'both' | 'all';
   schemaOutDir?: string;
   constantsInclude?: string;
+  constantsFromRemote?: boolean;
   // Direct file import
   importFile?: string;
   targetDb?: string;
@@ -584,7 +586,13 @@ const argv = yargs(hideBin(process.argv))
   .option("constantsInclude", {
     type: "string",
     description:
-      "Comma-separated categories to include: databases,collections,buckets,functions",
+      "Comma-separated categories to include: databases,collections,buckets,functions,dbTables",
+  })
+  .option("constantsFromRemote", {
+    alias: ["from-remote"],
+    type: "boolean",
+    description:
+      "Fetch constants from live Appwrite API instead of local config (enables DB_TABLES)",
   })
   .option("generateSchemas", {
     type: "boolean",
@@ -752,6 +760,8 @@ async function main() {
       );
       type SupportedLanguage =
         import("@njdamstra/appwrite-utils-helpers").SupportedLanguage;
+      type Constants =
+        import("@njdamstra/appwrite-utils-helpers").Constants;
 
       if (!controller.config) {
         MessageFormatter.error("No Appwrite configuration found", undefined, {
@@ -764,17 +774,114 @@ async function main() {
         .constantsLanguages!.split(",")
         .map((l) => l.trim()) as SupportedLanguage[];
 
-      // Determine output directory - use config folder/constants by default, or custom path if specified
+      // Parse include filter (fix: was previously ignored)
+      let include: { databases?: boolean; collections?: boolean; buckets?: boolean; functions?: boolean; dbTables?: boolean } | undefined;
+      if (argv.constantsInclude) {
+        const cats = argv.constantsInclude.split(",").map((c) => c.trim());
+        include = {
+          databases: cats.includes("databases"),
+          collections: cats.includes("collections"),
+          buckets: cats.includes("buckets"),
+          functions: cats.includes("functions"),
+          dbTables: cats.includes("dbTables"),
+        };
+      }
+
+      // Determine output directory
       let outputDir: string;
       if (argv.constantsOutput === "auto") {
-        // Default case: use config directory + constants, fallback to current directory
         const configPath = controller.getAppwriteFolderPath();
         outputDir = configPath
           ? path.join(configPath, "constants")
           : path.join(process.cwd(), "constants");
       } else {
-        // Custom output directory specified
         outputDir = argv.constantsOutput!;
+      }
+
+      const generator = new ConstantsGenerator(controller.config);
+      let constantsOverride: Constants | undefined;
+
+      if (argv.constantsFromRemote) {
+        if (!controller.database || !controller.storage || !controller.appwriteServer) {
+          MessageFormatter.error(
+            "Remote fetch requires a configured Appwrite API key. Ensure endpoint, projectId, and apiKey are set.",
+            undefined,
+            { prefix: "Constants" }
+          );
+          return;
+        }
+
+        MessageFormatter.progress("Fetching constants from Appwrite API...", { prefix: "Constants" });
+
+        const databases: Record<string, string> = {};
+        const collections: Record<string, string> = {};
+        const dbTables: Record<string, Record<string, string>> = {};
+
+        const allDbs = await fetchAllDatabases(controller.database);
+        for (const db of allDbs) {
+          const dbKey = generator.toConstantName(db.name || db.$id);
+          databases[dbKey] = db.$id;
+
+          const dbColls = await fetchAllCollections(db.$id, controller.database);
+          if (dbColls.length === 0) continue;
+
+          const tableEntry: Record<string, string> = { __db: db.$id };
+          for (const coll of dbColls) {
+            let collKey = generator.toConstantName(coll.name || coll.$id);
+            // Handle collection name collisions across databases
+            if (collections[collKey] && collections[collKey] !== coll.$id) {
+              // Rename existing collision by finding which DB it belonged to
+              const existingId = collections[collKey];
+              let existingDbKey: string | undefined;
+              for (const [dk, entry] of Object.entries(dbTables)) {
+                const match = Object.entries(entry).find(([k, v]) => k !== '__db' && v === existingId);
+                if (match) { existingDbKey = dk; break; }
+              }
+              if (existingDbKey) {
+                const prefixedExisting = `${existingDbKey}_${collKey}`;
+                collections[prefixedExisting] = existingId;
+                delete collections[collKey];
+                // Update the dbTables entry that had the old key
+                for (const entry of Object.values(dbTables)) {
+                  if (entry[collKey] === existingId) {
+                    entry[prefixedExisting] = existingId;
+                    delete entry[collKey];
+                    break;
+                  }
+                }
+              }
+              collKey = `${dbKey}_${collKey}`;
+            }
+            collections[collKey] = coll.$id;
+            tableEntry[collKey] = coll.$id;
+          }
+          dbTables[dbKey] = tableEntry;
+        }
+
+        // Fetch buckets
+        const buckets: Record<string, string> = {};
+        const bucketList = await listBuckets(controller.storage);
+        for (const bucket of bucketList.buckets) {
+          const key = generator.toConstantName(bucket.name || bucket.$id);
+          buckets[key] = bucket.$id;
+        }
+
+        // Fetch functions
+        const functions: Record<string, string> = {};
+        const funcList = await listFunctions(controller.appwriteServer);
+        for (const func of funcList.functions) {
+          const key = generator.toConstantName(func.name || func.$id);
+          functions[key] = func.$id;
+        }
+
+        constantsOverride = { databases, collections, buckets, functions, dbTables };
+        MessageFormatter.success(
+          `Fetched ${Object.keys(databases).length} databases, ${Object.keys(collections).length} collections, ${Object.keys(buckets).length} buckets, ${Object.keys(functions).length} functions`,
+          { prefix: "Constants" }
+        );
+      } else if (include?.dbTables) {
+        MessageFormatter.info("DB_TABLES requires --from-remote flag; skipping dbTables.", { prefix: "Constants" });
+        include.dbTables = false;
       }
 
       MessageFormatter.info(
@@ -782,8 +889,7 @@ async function main() {
         { prefix: "Constants" }
       );
 
-      const generator = new ConstantsGenerator(controller.config);
-      await generator.generateFiles(languages, outputDir);
+      await generator.generateFiles(languages, outputDir, include, constantsOverride);
 
       operationStats.generatedConstants = languages.length;
       MessageFormatter.success(`Constants generated in ${outputDir}`, {

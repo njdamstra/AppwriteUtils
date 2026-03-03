@@ -12,11 +12,12 @@ export type SupportedLanguage =
   | "json"
   | "env";
 
-interface Constants {
+export interface Constants {
   databases: Record<string, string>;
   collections: Record<string, string>;
   buckets: Record<string, string>;
   functions: Record<string, string>;
+  dbTables?: Record<string, Record<string, string>>;
 }
 
 export class ConstantsGenerator {
@@ -71,7 +72,7 @@ export class ConstantsGenerator {
     return constants;
   }
 
-  private toConstantName(name: string): string {
+  public toConstantName(name: string): string {
     return name
       .replace(/[^a-zA-Z0-9]/g, '_')
       .replace(/_+/g, '_')
@@ -90,7 +91,23 @@ export class ConstantsGenerator {
   }
 
   generateTypeScript(constantsOverride?: Constants): string {
-    const { databases, collections, buckets, functions } = constantsOverride || this.constants;
+    const c = constantsOverride || this.constants;
+    const { databases, collections, buckets, functions, dbTables } = c;
+
+    let dbTablesBlock = '';
+    if (dbTables && Object.keys(dbTables).length > 0) {
+      const entries = Object.entries(dbTables).map(([dbKey, colls]) => {
+        const inner = Object.entries(colls).map(([collKey, collId]) => {
+          if (collKey === '__db') {
+            return `    __db: DATABASE_IDS.${dbKey}`;
+          }
+          const matchingCollKey = Object.entries(collections).find(([, v]) => v === collId)?.[0];
+          return `    ${collKey}: COLLECTION_IDS.${matchingCollKey || collKey}`;
+        }).join(',\n');
+        return `  ${dbKey}: {\n${inner},\n  }`;
+      }).join(',\n');
+      dbTablesBlock = `\nexport const DB_TABLES = {\n${entries},\n} as const;\n`;
+    }
 
     return `// Auto-generated Appwrite constants
 // Generated on ${new Date().toISOString()}
@@ -110,7 +127,7 @@ ${Object.entries(buckets).map(([key, value]) => `  ${key}: "${value}"`).join(',\
 export const FUNCTION_IDS = {
 ${Object.entries(functions).map(([key, value]) => `  ${key}: "${value}"`).join(',\n')}
 } as const;
-
+${dbTablesBlock}
 // Type helpers
 export type DatabaseId = typeof DATABASE_IDS[keyof typeof DATABASE_IDS];
 export type CollectionId = typeof COLLECTION_IDS[keyof typeof COLLECTION_IDS];
@@ -126,7 +143,23 @@ export const ALL_FUNCTION_IDS = Object.values(FUNCTION_IDS);
   }
 
   generateJavaScript(constantsOverride?: Constants): string {
-    const { databases, collections, buckets, functions } = constantsOverride || this.constants;
+    const c = constantsOverride || this.constants;
+    const { databases, collections, buckets, functions, dbTables } = c;
+
+    let dbTablesBlock = '';
+    if (dbTables && Object.keys(dbTables).length > 0) {
+      const entries = Object.entries(dbTables).map(([dbKey, colls]) => {
+        const inner = Object.entries(colls).map(([collKey, collId]) => {
+          if (collKey === '__db') {
+            return `    __db: DATABASE_IDS.${dbKey}`;
+          }
+          const matchingCollKey = Object.entries(collections).find(([, v]) => v === collId)?.[0];
+          return `    ${collKey}: COLLECTION_IDS.${matchingCollKey || collKey}`;
+        }).join(',\n');
+        return `  ${dbKey}: {\n${inner},\n  }`;
+      }).join(',\n');
+      dbTablesBlock = `\nexport const DB_TABLES = {\n${entries},\n};\n`;
+    }
 
     return `// Auto-generated Appwrite constants
 // Generated on ${new Date().toISOString()}
@@ -146,7 +179,7 @@ ${Object.entries(buckets).map(([key, value]) => `  ${key}: "${value}"`).join(',\
 export const FUNCTION_IDS = {
 ${Object.entries(functions).map(([key, value]) => `  ${key}: "${value}"`).join(',\n')}
 };
-
+${dbTablesBlock}
 // Helper arrays for runtime use
 export const ALL_DATABASE_IDS = Object.values(DATABASE_IDS);
 export const ALL_COLLECTION_IDS = Object.values(COLLECTION_IDS);
@@ -156,7 +189,19 @@ export const ALL_FUNCTION_IDS = Object.values(FUNCTION_IDS);
   }
 
   generatePython(constantsOverride?: Constants): string {
-    const { databases, collections, buckets, functions } = constantsOverride || this.constants;
+    const c = constantsOverride || this.constants;
+    const { databases, collections, buckets, functions, dbTables } = c;
+
+    let dbTablesBlock = '';
+    if (dbTables && Object.keys(dbTables).length > 0) {
+      const entries = Object.entries(dbTables).map(([dbKey, colls]) => {
+        const inner = Object.entries(colls).map(([collKey, collId]) => {
+          return `        "${collKey}": "${collId}"`;
+        }).join(',\n');
+        return `    "${dbKey}": {\n${inner},\n    }`;
+      }).join(',\n');
+      dbTablesBlock = `\nDB_TABLES = {\n${entries},\n}\n`;
+    }
 
     return `# Auto-generated Appwrite constants
 # Generated on ${new Date().toISOString()}
@@ -176,7 +221,7 @@ ${Object.entries(buckets).map(([key, value]) => `    ${key} = "${value}"`).join(
 class FunctionIds:
     """Function ID constants"""
 ${Object.entries(functions).map(([key, value]) => `    ${key} = "${value}"`).join('\n')}
-
+${dbTablesBlock}
 # Helper dictionaries for runtime use
 DATABASE_ID_MAP = {
 ${Object.entries(databases).map(([key, value]) => `    "${this.toSnakeCase(key)}": "${value}"`).join(',\n')}
@@ -197,7 +242,19 @@ ${Object.entries(functions).map(([key, value]) => `    "${this.toSnakeCase(key)}
   }
 
   generatePHP(constantsOverride?: Constants): string {
-    const { databases, collections, buckets, functions } = constantsOverride || this.constants;
+    const c = constantsOverride || this.constants;
+    const { databases, collections, buckets, functions, dbTables } = c;
+
+    let dbTablesBlock = '';
+    if (dbTables && Object.keys(dbTables).length > 0) {
+      const entries = Object.entries(dbTables).map(([dbKey, colls]) => {
+        const inner = Object.entries(colls).map(([collKey, collId]) => {
+          return `            '${collKey}' => '${collId}'`;
+        }).join(',\n');
+        return `        '${dbKey}' => [\n${inner},\n        ]`;
+      }).join(',\n');
+      dbTablesBlock = `\n    const DB_TABLES = [\n${entries},\n    ];\n`;
+    }
 
     return `<?php
 // Auto-generated Appwrite constants
@@ -220,7 +277,7 @@ ${Object.entries(buckets).map(([key, value]) => `        '${key}' => '${value}'`
     const FUNCTION_IDS = [
 ${Object.entries(functions).map(([key, value]) => `        '${key}' => '${value}'`).join(',\n')}
     ];
-
+${dbTablesBlock}
     /**
      * Get all database IDs as array
      */
@@ -253,7 +310,19 @@ ${Object.entries(functions).map(([key, value]) => `        '${key}' => '${value}
   }
 
   generateDart(constantsOverride?: Constants): string {
-    const { databases, collections, buckets, functions } = constantsOverride || this.constants;
+    const c = constantsOverride || this.constants;
+    const { databases, collections, buckets, functions, dbTables } = c;
+
+    let dbTablesBlock = '';
+    if (dbTables && Object.keys(dbTables).length > 0) {
+      const entries = Object.entries(dbTables).map(([dbKey, colls]) => {
+        const inner = Object.entries(colls).map(([collKey, collId]) => {
+          return `      '${this.toCamelCase(collKey)}': '${collId}'`;
+        }).join(',\n');
+        return `    '${this.toCamelCase(dbKey)}': {\n${inner},\n    }`;
+      }).join(',\n');
+      dbTablesBlock = `\n  static const Map<String, Map<String, String>> dbTables = {\n${entries},\n  };\n`;
+    }
 
     return `// Auto-generated Appwrite constants
 // Generated on ${new Date().toISOString()}
@@ -275,7 +344,7 @@ ${Object.entries(buckets).map(([key, value]) => `    '${this.toCamelCase(key)}':
   static const Map<String, String> functionIds = {
 ${Object.entries(functions).map(([key, value]) => `    '${this.toCamelCase(key)}': '${value}'`).join(',\n')}
   };
-
+${dbTablesBlock}
   // Helper getters for individual IDs
 ${Object.entries(databases).map(([key, value]) => `  static String get ${this.toCamelCase(key)}DatabaseId => '${value}';`).join('\n')}
 
@@ -290,7 +359,7 @@ ${Object.entries(functions).map(([key, value]) => `  static String get ${this.to
 
   generateJSON(constantsOverride?: Constants): string {
     const c = constantsOverride || this.constants;
-    return JSON.stringify({
+    const obj: Record<string, unknown> = {
       meta: {
         generated: new Date().toISOString(),
         generator: "@njdamstra/appwrite-utils-cli"
@@ -298,8 +367,12 @@ ${Object.entries(functions).map(([key, value]) => `  static String get ${this.to
       databases: c.databases,
       collections: c.collections,
       buckets: c.buckets,
-      functions: c.functions
-    }, null, 2);
+      functions: c.functions,
+    };
+    if (c.dbTables && Object.keys(c.dbTables).length > 0) {
+      obj.dbTables = c.dbTables;
+    }
+    return JSON.stringify(obj, null, 2);
   }
 
   generateEnv(constantsOverride?: Constants): string {
@@ -328,17 +401,21 @@ ${Object.entries(functions).map(([key, value]) => `  static String get ${this.to
   async generateFiles(
     languages: SupportedLanguage[],
     outputDir: string,
-    include?: { databases?: boolean; collections?: boolean; buckets?: boolean; functions?: boolean }
+    include?: { databases?: boolean; collections?: boolean; buckets?: boolean; functions?: boolean; dbTables?: boolean },
+    constantsOverride?: Constants
   ): Promise<void> {
     await fs.mkdir(outputDir, { recursive: true });
 
+    const source = constantsOverride || this.constants;
+
     const filterConstants = (): Constants => {
-      if (!include) return this.constants;
+      if (!include) return source;
       return {
-        databases: include.databases === false ? {} : this.constants.databases,
-        collections: include.collections === false ? {} : this.constants.collections,
-        buckets: include.buckets === false ? {} : this.constants.buckets,
-        functions: include.functions === false ? {} : this.constants.functions,
+        databases: include.databases === false ? {} : source.databases,
+        collections: include.collections === false ? {} : source.collections,
+        buckets: include.buckets === false ? {} : source.buckets,
+        functions: include.functions === false ? {} : source.functions,
+        dbTables: include.dbTables === false ? undefined : source.dbTables,
       };
     };
 
