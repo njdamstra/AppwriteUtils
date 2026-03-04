@@ -586,7 +586,8 @@ async function migrateOneAttribute(
       databaseId,
       collectionId,
       attributeKey,
-      backupKey
+      backupKey,
+      opts.recentOnly
     );
     advance("data_verified_backup");
   }
@@ -794,14 +795,17 @@ async function verifyDataCopy(
   databaseId: string,
   collectionId: string,
   sourceKey: string,
-  targetKey: string
+  targetKey: string,
+  recentOnly?: number
 ): Promise<void> {
-  // Spot-check first 5 documents
+  // Spot-check 5 documents — when recentOnly, check the most recent (which were copied)
+  const queries: string[] = [Query.limit(5)];
+  if (recentOnly) queries.push(Query.orderDesc("$createdAt"));
   const res = await tryAwaitWithRetry(() =>
     adapter.listRows({
       databaseId,
       tableId: collectionId,
-      queries: [Query.limit(5)],
+      queries,
     })
   );
   const docs = res?.documents || res?.rows || [];
