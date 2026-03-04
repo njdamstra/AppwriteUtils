@@ -1,7 +1,7 @@
 {
   "name": "@njdamstra/appwrite-utils",
   "module": "dist/index.js",
-  "version": "1.7.1",
+  "version": "1.7.3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",

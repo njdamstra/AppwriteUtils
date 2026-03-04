@@ -66,6 +66,31 @@ const YamlConfigSchema = z.object({
       collectionsDirectory: "collections",
       tablesDirectory: "tables",
     }),
+  constants: z
+    .object({
+      databases: z.object({
+        include: z.array(z.string()).optional(),
+        exclude: z.array(z.string()).optional(),
+        excludePattern: z.string().optional(),
+      }).optional(),
+      collections: z.object({
+        include: z.array(z.string()).optional(),
+        exclude: z.array(z.string()).optional(),
+        excludePattern: z.string().optional(),
+        includeFrom: z.record(z.string(), z.array(z.string())).optional(),
+      }).optional(),
+      buckets: z.object({
+        include: z.array(z.string()).optional(),
+        exclude: z.array(z.string()).optional(),
+        excludePattern: z.string().optional(),
+      }).optional(),
+      functions: z.object({
+        include: z.array(z.string()).optional(),
+        exclude: z.array(z.string()).optional(),
+        excludePattern: z.string().optional(),
+      }).optional(),
+    })
+    .optional(),
   migrations: z
     .object({
       enabled: z.boolean().default(false),
@@ -250,6 +275,12 @@ export const convertYamlToAppwriteConfig = (yamlConfig: YamlConfig): AppwriteCon
       templateVersion: func.templateVersion,
     })),
     collections: [], // Note: Collections are managed separately in YAML configs via individual collection files
+    constantsConfig: yamlConfig.constants ? {
+      databases: yamlConfig.constants.databases,
+      collections: yamlConfig.constants.collections,
+      buckets: yamlConfig.constants.buckets,
+      functions: yamlConfig.constants.functions,
+    } : undefined,
   };
 
   return appwriteConfig;
@@ -552,6 +583,14 @@ export const writeYamlConfig = async (configPath: string, config: AppwriteConfig
         collectionsDirectory: config.schemaConfig?.collectionsDirectory || "collections",
         tablesDirectory: config.schemaConfig?.tablesDirectory || "tables",
       },
+      ...(config.constantsConfig && {
+        constants: {
+          databases: config.constantsConfig.databases,
+          collections: config.constantsConfig.collections,
+          buckets: config.constantsConfig.buckets,
+          functions: config.constantsConfig.functions,
+        },
+      }),
       migrations: {
         enabled: true,
       },

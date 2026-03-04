@@ -3,6 +3,21 @@ import path from "path";
 import { type AppwriteConfig } from "@njdamstra/appwrite-utils";
 import { MessageFormatter } from "./messageFormatter.js";
 
+export interface ResourceFilter {
+  include?: string[];
+  exclude?: string[];
+  excludePattern?: string;
+}
+
+export interface ConstantsFilterConfig {
+  databases?: ResourceFilter;
+  collections?: ResourceFilter & {
+    includeFrom?: Record<string, string[]>;
+  };
+  buckets?: ResourceFilter;
+  functions?: ResourceFilter;
+}
+
 export type SupportedLanguage =
   | "typescript"
   | "javascript"
@@ -70,6 +85,52 @@ export class ConstantsGenerator {
     });
 
     return constants;
+  }
+
+  static shouldInclude(
+    name: string,
+    id: string,
+    filter?: ResourceFilter
+  ): boolean {
+    if (!filter) return true;
+
+    const lName = name.toLowerCase();
+    const lId = id.toLowerCase();
+
+    // Whitelist takes priority — if set, must be in it
+    if (filter.include && filter.include.length > 0) {
+      return filter.include.some(
+        (item) => item.toLowerCase() === lName || item.toLowerCase() === lId
+      );
+    }
+
+    // Blacklist
+    if (filter.exclude) {
+      if (
+        filter.exclude.some(
+          (item) => item.toLowerCase() === lName || item.toLowerCase() === lId
+        )
+      ) {
+        return false;
+      }
+    }
+
+    // Pattern exclusion
+    if (filter.excludePattern) {
+      try {
+        const regex = new RegExp(filter.excludePattern, "i");
+        if (regex.test(name) || regex.test(id)) {
+          return false;
+        }
+      } catch {
+        MessageFormatter.warning(
+          `Invalid excludePattern regex: "${filter.excludePattern}" — ignoring`,
+          { prefix: "Constants" }
+        );
+      }
+    }
+
+    return true;
   }
 
   public toConstantName(name: string): string {

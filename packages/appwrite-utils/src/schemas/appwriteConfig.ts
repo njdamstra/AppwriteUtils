@@ -180,6 +180,32 @@ export const AppwriteConfigSchema = z.object({
     })
     .optional()
     .describe("Schema and data directory configuration"),
+  constantsConfig: z
+    .object({
+      databases: z.object({
+        include: z.array(z.string()).optional(),
+        exclude: z.array(z.string()).optional(),
+        excludePattern: z.string().optional(),
+      }).optional(),
+      collections: z.object({
+        include: z.array(z.string()).optional(),
+        exclude: z.array(z.string()).optional(),
+        excludePattern: z.string().optional(),
+        includeFrom: z.record(z.string(), z.array(z.string())).optional(),
+      }).optional(),
+      buckets: z.object({
+        include: z.array(z.string()).optional(),
+        exclude: z.array(z.string()).optional(),
+        excludePattern: z.string().optional(),
+      }).optional(),
+      functions: z.object({
+        include: z.array(z.string()).optional(),
+        exclude: z.array(z.string()).optional(),
+        excludePattern: z.string().optional(),
+      }).optional(),
+    })
+    .optional()
+    .describe("Filtering rules for constants generation (used with --fromRemote)"),
 }).transform((data) => {
   // Auto-detect authentication method if set to 'auto'
   if (data.authMethod === 'auto') {
