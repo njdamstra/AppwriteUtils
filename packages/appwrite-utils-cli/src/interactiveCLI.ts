@@ -1,7 +1,8 @@
 import inquirer from "inquirer";
 import { UtilsController } from "./utilsController.js";
 import { fetchAllCollections } from "./collections/methods.js";
-import { listBuckets, createBucket } from "./storage/methods.js";
+import { getFilterConfig, fetchFilteredCollections } from "./shared/resourceFilter.js";
+import { listBuckets, createBucket, fetchAllBuckets } from "./storage/methods.js";
 import {
   Databases,
   Storage,
@@ -29,7 +30,7 @@ import { DateTime } from "luxon";
 import {
   getFunction,
   downloadLatestFunctionDeployment,
-  listFunctions,
+  fetchAllFunctions,
 } from "./functions/methods.js";
 import { join } from "node:path";
 import path from "path";
@@ -363,9 +364,12 @@ export class InteractiveCLI {
       );
       shouldFilterByDatabase = false;
     } else {
-      remoteCollections = await fetchAllCollections(
+      const resourceFilter = getFilterConfig(this.controller?.config);
+      remoteCollections = await fetchFilteredCollections(
         database.$id,
-        databasesClient
+        database.name,
+        databasesClient,
+        resourceFilter
       );
     }
 
@@ -751,17 +755,15 @@ export class InteractiveCLI {
     multiple: boolean = true,
     includeRemote: boolean = false
   ): Promise<AppwriteFunction[]> {
-    const remoteFunctions = includeRemote
-      ? await listFunctions(this.controller!.appwriteServer!, [
-          Query.limit(1000),
-        ])
-      : { functions: [] };
+    const remoteFunctionsList = includeRemote
+      ? await fetchAllFunctions(this.controller!.appwriteServer!)
+      : [];
     const localFunctions = this.getLocalFunctions();
 
     // Combine functions, preferring local ones
     const allFunctions = [
       ...localFunctions,
-      ...remoteFunctions.functions.filter(
+      ...remoteFunctionsList.filter(
         (rf: any) => !localFunctions.some((lf) => lf.name === rf.name || lf.$id === rf.$id)
       ),
     ];
@@ -854,10 +856,10 @@ export class InteractiveCLI {
       );
     }
 
-    const allBuckets = await listBuckets(storage);
+    const allBucketsList = await fetchAllBuckets(storage);
 
     // If there are no buckets, ask to create one for each database
-    if (allBuckets.total === 0) {
+    if (allBucketsList.length === 0) {
       const databasesToUse = databases ?? config.databases;
       for (const database of databasesToUse) {
         // If database has bucket config in local config, use that
@@ -894,9 +896,9 @@ export class InteractiveCLI {
 
     // Configure global buckets
     let globalBuckets: Models.Bucket[] = [];
-    if (allBuckets.total > 0) {
+    if (allBucketsList.length > 0) {
       globalBuckets = await this.selectBuckets(
-        allBuckets.buckets,
+        allBucketsList,
         "Select global buckets (buckets that are not associated with any specific database):",
         true
       );
@@ -941,7 +943,7 @@ export class InteractiveCLI {
 
         if (action === "assign") {
           const selectedBuckets = await this.selectBuckets(
-            allBuckets.buckets.filter(
+            allBucketsList.filter(
               (b) => !globalBuckets.some((gb) => gb.$id === b.$id)
             ),
             `Select a bucket for the database "${database.name}":`,

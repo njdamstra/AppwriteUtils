@@ -25,6 +25,8 @@ import type { SetupOptions } from "../../utilsController.js";
 import { UsersController } from "../../users/methods.js";
 import { logger } from '@njdamstra/appwrite-utils-helpers';
 import { MessageFormatter } from '@njdamstra/appwrite-utils-helpers';
+import { fetchAllDatabases } from "../../databases/methods.js";
+import { fetchAllCollections } from "../../collections/methods.js";
 import { ProgressManager } from "../../shared/progressManager.js";
 import { tryAwaitWithRetry } from "@njdamstra/appwrite-utils-helpers";
 import { updateOperation, findOrCreateOperation } from "../../shared/migrationHelpers.js";
@@ -98,8 +100,7 @@ export class ImportOrchestrator {
     if (this.databasesToRun.length > 0) {
       databasesToProcess = this.databasesToRun;
     } else {
-      const allDatabases = await this.database.list();
-      databasesToProcess = allDatabases.databases;
+      databasesToProcess = await fetchAllDatabases(this.database);
     }
 
     let processedDatabase: Models.Database | undefined;
@@ -626,8 +627,8 @@ export class ImportOrchestrator {
   private async findExistingCollection(dbId: string, collection: CollectionCreate): Promise<any> {
     // Implementation to find existing collection (preserve existing logic)
     try {
-      const collections = await this.database.listCollections(dbId);
-      return collections.collections.find(c => c.name === collection.name || c.$id === collection.$id);
+      const collections = await fetchAllCollections(dbId, this.database);
+      return collections.find(c => c.name === collection.name || c.$id === collection.$id);
     } catch (error) {
       logger.error(`Error finding collection ${collection.name}:`, error);
       return null;

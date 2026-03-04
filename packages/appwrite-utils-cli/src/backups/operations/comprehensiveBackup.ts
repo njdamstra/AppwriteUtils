@@ -18,6 +18,8 @@ import type {
 } from "../schemas/comprehensiveManifest.js";
 import type { AppwriteConfig } from "@njdamstra/appwrite-utils";
 import { fetchAllDatabases } from "../../databases/methods.js";
+import { fetchAllBuckets } from "../../storage/methods.js";
+import { getFilterConfig, filterDatabases, filterBuckets } from "../../shared/resourceFilter.js";
 
 export interface ComprehensiveBackupOptions {
   trackingDatabaseId: string; // Database to store backup tracking
@@ -65,9 +67,13 @@ export async function comprehensiveBackup(
 
     // Phase 1: Backup ALL databases
     if (!options.skipDatabases) {
-      MessageFormatter.info("Phase 1: Backing up ALL databases", { prefix: "Backup" });
+      MessageFormatter.info("Phase 1: Backing up databases", { prefix: "Backup" });
 
-      const allDatabases = await fetchAllDatabases(databases);
+      const resourceFilter = getFilterConfig(config);
+      const allDatabases = filterDatabases(
+        await fetchAllDatabases(databases),
+        resourceFilter
+      );
 
       // Validate each database exists before attempting backup
       const validDatabases: Models.Database[] = [];
@@ -188,10 +194,14 @@ export async function comprehensiveBackup(
 
     // Phase 2: Backup ALL storage buckets
     if (!options.skipBuckets) {
-      MessageFormatter.info("Phase 2: Backing up ALL storage buckets", { prefix: "Backup" });
+      MessageFormatter.info("Phase 2: Backing up storage buckets", { prefix: "Backup" });
 
-      const allBuckets = await storage.listBuckets();
-      const bucketsToBackup = allBuckets.buckets.filter(b => b.$id !== backupBucketId);
+      const backupResourceFilter = getFilterConfig(config);
+      const allBuckets = await fetchAllBuckets(storage);
+      const bucketsToBackup = filterBuckets(
+        allBuckets.filter(b => b.$id !== backupBucketId),
+        backupResourceFilter
+      );
 
       MessageFormatter.info(`Found ${bucketsToBackup.length} buckets to backup`, { prefix: "Backup" });
 

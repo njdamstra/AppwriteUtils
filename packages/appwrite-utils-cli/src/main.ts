@@ -12,8 +12,8 @@ import { setupDirsFiles } from "./utils/setupFiles.js";
 import { fetchAllCollections } from "./collections/methods.js";
 import type { Specification } from "@njdamstra/appwrite-utils";
 import chalk from "chalk";
-import { listSpecifications, listFunctions } from "./functions/methods.js";
-import { listBuckets } from "./storage/methods.js";
+import { listSpecifications, fetchAllFunctions } from "./functions/methods.js";
+import { fetchAllBuckets } from "./storage/methods.js";
 import { MessageFormatter, logger, AuthenticationError } from "@njdamstra/appwrite-utils-helpers";
 import { ConfirmationDialogs } from "./shared/confirmationDialogs.js";
 import { SelectionDialogs } from "./shared/selectionDialogs.js";
@@ -21,6 +21,7 @@ import type { SyncSelectionSummary, DatabaseSelection, BucketSelection } from ".
 import path from "path";
 import fs from "fs";
 import { createRequire } from "node:module";
+import { getFilterConfig, filterDatabases, filterBuckets, fetchFilteredCollections } from "./shared/resourceFilter.js";
 
 const require = createRequire(import.meta.url);
 if (!(globalThis as any).require) {
@@ -92,6 +93,7 @@ interface CliOptions {
   migrateStringsKeepBackups?: boolean;
   migrateStringsDryRun?: boolean;
   migrateStringsFresh?: boolean;
+  migrateStringsRecentOnly?: number;
 }
 
 type ParsedArgv = ArgumentsCamelCase<CliOptions>;
@@ -111,8 +113,12 @@ async function performEnhancedSync(
       return null;
     }
 
-    // Get all available databases from remote
-    const availableDatabases = await fetchAllDatabases(controller.database!);
+    // Get all available databases from remote, filtered by constantsConfig
+    const resourceFilter = getFilterConfig(controller.config);
+    const availableDatabases = filterDatabases(
+      await fetchAllDatabases(controller.database!),
+      resourceFilter
+    );
     if (availableDatabases.length === 0) {
       MessageFormatter.warning("No databases found in remote project", { prefix: "Sync" });
       return null;
@@ -209,8 +215,10 @@ async function performEnhancedSync(
 
       SelectionDialogs.showProgress(`Fetching tables for database: ${database.name}`);
 
-      // Get available tables from remote
-      const availableTables = await fetchAllCollections(databaseId, controller.database!);
+      // Get available tables from remote (filtered by constantsConfig)
+      const availableTables = await fetchFilteredCollections(
+        databaseId, database.name, controller.database!, resourceFilter
+      );
       availableTablesMap.set(databaseId, availableTables);
 
       // Get configured tables for this database
@@ -673,6 +681,11 @@ const argv = yargs(hideBin(process.argv))
     type: "boolean",
     description: "Ignore existing checkpoint and start migration fresh",
   })
+  .option("migrateStringsRecentOnly", {
+    alias: ["migrate-strings-recent-only"],
+    type: "number",
+    description: "Only migrate N most recent rows per attribute (default: all)",
+  })
   .parse() as ParsedArgv;
 
 async function main() {
@@ -813,16 +826,23 @@ async function main() {
 
         MessageFormatter.progress("Fetching constants from Appwrite API...", { prefix: "Constants" });
 
+        const filterConfig = controller.config.constantsConfig;
+
         const databases: Record<string, string> = {};
         const collections: Record<string, string> = {};
         const dbTables: Record<string, Record<string, string>> = {};
 
-        const allDbs = await fetchAllDatabases(controller.database);
+        const allDbs = filterDatabases(
+          await fetchAllDatabases(controller.database),
+          filterConfig
+        );
         for (const db of allDbs) {
           const dbKey = generator.toConstantName(db.name || db.$id);
           databases[dbKey] = db.$id;
 
-          const dbColls = await fetchAllCollections(db.$id, controller.database);
+          const dbColls = await fetchFilteredCollections(
+            db.$id, db.name, controller.database, filterConfig
+          );
           if (dbColls.length === 0) continue;
 
           const tableEntry: Record<string, string> = { __db: db.$id };
@@ -830,7 +850,6 @@ async function main() {
             let collKey = generator.toConstantName(coll.name || coll.$id);
             // Handle collection name collisions across databases
             if (collections[collKey] && collections[collKey] !== coll.$id) {
-              // Rename existing collision by finding which DB it belonged to
               const existingId = collections[collKey];
               let existingDbKey: string | undefined;
               for (const [dk, entry] of Object.entries(dbTables)) {
@@ -841,7 +860,6 @@ async function main() {
                 const prefixedExisting = `${existingDbKey}_${collKey}`;
                 collections[prefixedExisting] = existingId;
                 delete collections[collKey];
-                // Update the dbTables entry that had the old key
                 for (const entry of Object.values(dbTables)) {
                   if (entry[collKey] === existingId) {
                     entry[prefixedExisting] = existingId;
@@ -855,21 +873,30 @@ async function main() {
             collections[collKey] = coll.$id;
             tableEntry[collKey] = coll.$id;
           }
-          dbTables[dbKey] = tableEntry;
+
+          if (Object.keys(tableEntry).length > 1) {
+            dbTables[dbKey] = tableEntry;
+          }
         }
 
-        // Fetch buckets
+        // Fetch buckets (filtered)
         const buckets: Record<string, string> = {};
-        const bucketList = await listBuckets(controller.storage);
-        for (const bucket of bucketList.buckets) {
+        const bucketList = filterBuckets(
+          await fetchAllBuckets(controller.storage),
+          filterConfig
+        );
+        for (const bucket of bucketList) {
           const key = generator.toConstantName(bucket.name || bucket.$id);
           buckets[key] = bucket.$id;
         }
 
-        // Fetch functions
+        // Fetch functions (filtered)
         const functions: Record<string, string> = {};
-        const funcList = await listFunctions(controller.appwriteServer);
-        for (const func of funcList.functions) {
+        const allFunctions = await fetchAllFunctions(controller.appwriteServer);
+        for (const func of allFunctions) {
+          if (!ConstantsGenerator.shouldInclude(
+            func.name, func.$id, filterConfig?.functions
+          )) continue;
           const key = generator.toConstantName(func.name || func.$id);
           functions[key] = func.$id;
         }
@@ -1028,6 +1055,7 @@ async function main() {
           keepBackups: argv.migrateStringsKeepBackups ?? true,
           dryRun: argv.migrateStringsDryRun ?? false,
           freshRun: argv.migrateStringsFresh ?? false,
+          recentOnly: argv.migrateStringsRecentOnly,
         });
         if (results.failed > 0) {
           process.exit(1);
@@ -1396,8 +1424,12 @@ async function main() {
         return;
       }
 
-      // Fetch available DBs
-      const availableDatabases = await fetchAllDatabases(controller.database);
+      // Fetch available DBs (filtered by constantsConfig)
+      const pushFilter = getFilterConfig(controller.config);
+      const availableDatabases = filterDatabases(
+        await fetchAllDatabases(controller.database),
+        pushFilter
+      );
       if (availableDatabases.length === 0) {
         MessageFormatter.warning("No databases found in remote project", { prefix: "Push" });
         return;
@@ -1441,8 +1473,10 @@ async function main() {
           return true; // eligible everywhere if unspecified
         });
 
-        // Fetch available tables from remote for status/context
-        const availableTables = await fetchAllCollections(dbId, controller.database);
+        // Fetch available tables from remote for status/context (filtered)
+        const availableTables = await fetchFilteredCollections(
+          dbId, db.name, controller.database, pushFilter
+        );
         const remoteTableIds = new Set(availableTables.map(table => table.$id));
         const localItems = eligibleConfigItems;
         const localItemIds = localItems.map(item => item.$id || (item as any).id || (item as any).tableId || item.name);

@@ -3,6 +3,8 @@ import { tryAwaitWithRetry } from "@njdamstra/appwrite-utils-helpers";
 import { type AppwriteConfig } from "@njdamstra/appwrite-utils";
 import { ulid } from "ulidx";
 import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
+import { fetchAllDatabases } from "./methods.js";
+import { fetchAllCollections } from "../collections/methods.js";
 
 export const ensureDatabasesExist = async (config: AppwriteConfig, databasesToEnsure?: Models.Database[]) => {
   if (!config.appwriteClient) {
@@ -16,12 +18,10 @@ export const ensureDatabasesExist = async (config: AppwriteConfig, databasesToEn
     return;
   }
 
-  const existingDatabases = await tryAwaitWithRetry(
-    async () => await database.list([Query.limit(500)])
-  );
+  const existingDatabases = await fetchAllDatabases(database);
 
   for (const db of databasesToCreate) {
-    if (!existingDatabases.databases.some((d) => d.name === db.name)) {
+    if (!existingDatabases.some((d) => d.name === db.name)) {
       await tryAwaitWithRetry(
         async () => await database.create(db.$id || ulid(), db.name, true)
       );
@@ -35,10 +35,8 @@ export const wipeOtherDatabases = async (
   databasesToKeep: Models.Database[]
 ) => {
   MessageFormatter.info(`Databases to keep: ${databasesToKeep.map(db => db.name).join(", ")}`);
-  const allDatabases = await tryAwaitWithRetry(
-    async () => await database.list([Query.limit(500)])
-  );
-  for (const db of allDatabases.databases) {
+  const allDatabases = await fetchAllDatabases(database);
+  for (const db of allDatabases) {
     if (!databasesToKeep.some((d) => d.name === db.name)) {
       await tryAwaitWithRetry(async () => await database.delete(db.$id));
       MessageFormatter.success(`Deleted database: ${db.name}`);
@@ -55,12 +53,10 @@ export const ensureCollectionsExist = async (
   const collectionsToCreate = collectionsToEnsure || 
     (config.collections ? config.collections : []);
 
-  const existingCollections = await tryAwaitWithRetry(
-    async () => await databaseClient.listCollections(database.$id, [Query.limit(500)])
-  );
+  const existingCollections = await fetchAllCollections(database.$id, databaseClient);
 
   for (const collection of collectionsToCreate) {
-    if (!existingCollections.collections.some((c) => c.name === collection.name)) {
+    if (!existingCollections.some((c) => c.name === collection.name)) {
       await tryAwaitWithRetry(
         async () => await databaseClient.createCollection(
           database.$id,

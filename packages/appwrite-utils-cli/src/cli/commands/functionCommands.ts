@@ -10,7 +10,7 @@ import {
   createFunctionTemplate,
   deleteFunction,
   downloadLatestFunctionDeployment,
-  listFunctions,
+  fetchAllFunctions,
   listSpecifications,
 } from "../../functions/methods.js";
 import { deployLocalFunction } from "../../functions/deployments.js";
@@ -359,16 +359,15 @@ export const functionCommands = {
   },
 
   async updateFunctionSpec(cli: InteractiveCLI): Promise<void> {
-    const remoteFunctions = await listFunctions(
-      (cli as any).controller!.appwriteServer!,
-      [Query.limit(1000)]
+    const remoteFunctionsList = await fetchAllFunctions(
+      (cli as any).controller!.appwriteServer!
     );
     const localFunctions = (cli as any).getLocalFunctions();
 
     const allFunctions = [
-      ...remoteFunctions.functions,
+      ...remoteFunctionsList,
       ...localFunctions.filter(
-        (f: any) => !remoteFunctions.functions.some((rf: any) => rf.name === f.name)
+        (f: any) => !remoteFunctionsList.some((rf: any) => rf.name === f.name)
       ),
     ];
 

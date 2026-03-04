@@ -4,6 +4,7 @@ import {
   Functions,
   Query,
   Runtime,
+  type Models,
 } from "node-appwrite";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -54,6 +55,29 @@ export const listFunctions = async (
   const functions = new Functions(client);
   const functionsList = await functions.list(queries, search);
   return functionsList;
+};
+
+export const fetchAllFunctions = async (
+  client: Client
+): Promise<Models.Function[]> => {
+  const functions = new Functions(client);
+  const allFunctions: Models.Function[] = [];
+  let lastId: string | undefined;
+
+  while (true) {
+    const queries = [Query.limit(100)];
+    if (lastId) {
+      queries.push(Query.cursorAfter(lastId));
+    }
+
+    const result = await functions.list(queries);
+    if (result.functions.length === 0) break;
+    allFunctions.push(...result.functions);
+    if (result.functions.length < 100) break;
+    lastId = result.functions[result.functions.length - 1].$id;
+  }
+
+  return allFunctions;
 };
 
 export const getFunction = async (client: Client, functionId: string) => {

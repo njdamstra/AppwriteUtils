@@ -124,6 +124,7 @@ export interface ExecuteOptions {
   batchDelayMs?: number;
   checkpointPath?: string;
   freshRun?: boolean;
+  recentOnly?: number;
 }
 
 // ── Helper: suggest target type from size + index presence ──

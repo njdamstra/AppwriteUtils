@@ -34,6 +34,28 @@ export const listBuckets = async (
   return await storage.listBuckets(queries, search);
 };
 
+export const fetchAllBuckets = async (
+  storage: Storage
+): Promise<Models.Bucket[]> => {
+  const allBuckets: Models.Bucket[] = [];
+  let lastId: string | undefined;
+
+  while (true) {
+    const queries = [Query.limit(100)];
+    if (lastId) {
+      queries.push(Query.cursorAfter(lastId));
+    }
+
+    const result = await storage.listBuckets(queries);
+    if (result.buckets.length === 0) break;
+    allBuckets.push(...result.buckets);
+    if (result.buckets.length < 100) break;
+    lastId = result.buckets[result.buckets.length - 1].$id;
+  }
+
+  return allBuckets;
+};
+
 export const getBucket = async (storage: Storage, bucketId: string) => {
   return await storage.getBucket(bucketId);
 };

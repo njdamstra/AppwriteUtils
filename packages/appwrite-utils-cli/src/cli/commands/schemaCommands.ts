@@ -1,11 +1,14 @@
 import inquirer from "inquirer";
 import path from "path";
 import chalk from "chalk";
-import { MessageFormatter } from '@njdamstra/appwrite-utils-helpers';
+import { MessageFormatter, ConstantsGenerator } from '@njdamstra/appwrite-utils-helpers';
 import { SchemaGenerator } from '@njdamstra/appwrite-utils-helpers';
 import { setupDirsFiles } from "../../utils/setupFiles.js";
 import { fetchAllDatabases } from "../../databases/methods.js";
+import { fetchAllBuckets } from "../../storage/methods.js";
+import { fetchAllFunctions } from "../../functions/methods.js";
 import type { InteractiveCLI } from "../../interactiveCLI.js";
+import { getFilterConfig, filterDatabases, filterBuckets, fetchFilteredCollections } from "../../shared/resourceFilter.js";
 
 export const schemaCommands = {
   async generateSchemas(cli: InteractiveCLI): Promise<void> {
@@ -172,22 +175,25 @@ export const schemaCommands = {
       let constantsOverride: Constants | undefined;
 
       if (source === 'remote') {
-        const { fetchAllCollections } = await import("../../collections/methods.js");
-        const { listBuckets } = await import("../../storage/methods.js");
-        const { listFunctions } = await import("../../functions/methods.js");
-
         MessageFormatter.progress("Fetching constants from Appwrite API...", { prefix: "Constants" });
+
+        const filterConfig = getFilterConfig(controller.config);
 
         const databases: Record<string, string> = {};
         const collections: Record<string, string> = {};
         const dbTables: Record<string, Record<string, string>> = {};
 
-        const allDbs = await fetchAllDatabases(controller.database!);
+        const allDbs = filterDatabases(
+          await fetchAllDatabases(controller.database!),
+          filterConfig
+        );
         for (const db of allDbs) {
           const dbKey = generator.toConstantName(db.name || db.$id);
           databases[dbKey] = db.$id;
 
-          const dbColls = await fetchAllCollections(db.$id, controller.database!);
+          const dbColls = await fetchFilteredCollections(
+            db.$id, db.name, controller.database!, filterConfig
+          );
           if (dbColls.length === 0) continue;
 
           const tableEntry: Record<string, string> = { __db: db.$id };
@@ -217,19 +223,28 @@ export const schemaCommands = {
             collections[collKey] = coll.$id;
             tableEntry[collKey] = coll.$id;
           }
-          dbTables[dbKey] = tableEntry;
+
+          if (Object.keys(tableEntry).length > 1) {
+            dbTables[dbKey] = tableEntry;
+          }
         }
 
         const buckets: Record<string, string> = {};
-        const bucketList = await listBuckets(controller.storage!);
-        for (const bucket of bucketList.buckets) {
+        const filteredBucketList = filterBuckets(
+          await fetchAllBuckets(controller.storage!),
+          filterConfig
+        );
+        for (const bucket of filteredBucketList) {
           const key = generator.toConstantName(bucket.name || bucket.$id);
           buckets[key] = bucket.$id;
         }
 
         const functions: Record<string, string> = {};
-        const funcList = await listFunctions(controller.appwriteServer!);
-        for (const func of funcList.functions) {
+        const allFunctions = await fetchAllFunctions(controller.appwriteServer!);
+        for (const func of allFunctions) {
+          if (!ConstantsGenerator.shouldInclude(
+            func.name, func.$id, filterConfig?.functions
+          )) continue;
           const key = generator.toConstantName(func.name || func.$id);
           functions[key] = func.$id;
         }

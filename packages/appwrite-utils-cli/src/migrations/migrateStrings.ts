@@ -416,6 +416,7 @@ export async function executeMigrationPlan(
             batchSize,
             batchDelayMs,
             keepBackups: options.keepBackups ?? true,
+            recentOnly: options.recentOnly,
           }
         );
         succeeded++;
@@ -511,6 +512,7 @@ interface MigrateOneOptions {
   batchSize: number;
   batchDelayMs: number;
   keepBackups: boolean;
+  recentOnly?: number;
 }
 
 async function migrateOneAttribute(
@@ -571,7 +573,8 @@ async function migrateOneAttribute(
       attributeKey,
       backupKey,
       opts.batchSize,
-      opts.batchDelayMs
+      opts.batchDelayMs,
+      opts.recentOnly
     );
     advance("data_copied_to_backup");
   }
@@ -697,7 +700,8 @@ async function copyAttributeData(
   sourceKey: string,
   targetKey: string,
   batchSize: number,
-  batchDelayMs: number
+  batchDelayMs: number,
+  recentOnly?: number
 ): Promise<void> {
   let lastId: string | undefined;
   let totalCopied = 0;
@@ -712,9 +716,12 @@ async function copyAttributeData(
     })
   );
   totalDocs = countRes?.total ?? undefined;
-  const progress = totalDocs
-    ? ProgressManager.create(`copy-${sourceKey}-${targetKey}`, totalDocs, {
-        title: `    Copy ${sourceKey} → ${targetKey}`,
+  const effectiveTotal = recentOnly && totalDocs
+    ? Math.min(totalDocs, recentOnly)
+    : totalDocs;
+  const progress = effectiveTotal
+    ? ProgressManager.create(`copy-${sourceKey}-${targetKey}`, effectiveTotal, {
+        title: `    Copy ${sourceKey} → ${targetKey}${recentOnly ? ` (recent ${recentOnly})` : ""}`,
       })
     : undefined;
 
@@ -722,6 +729,7 @@ async function copyAttributeData(
 
   while (true) {
     const queries: string[] = [Query.limit(batchSize)];
+    if (recentOnly) queries.push(Query.orderDesc("$createdAt"));
     if (lastId) queries.push(Query.cursorAfter(lastId));
 
     const res = await tryAwaitWithRetry(() =>
@@ -755,14 +763,18 @@ async function copyAttributeData(
     totalCopied += docs.length;
     lastId = docs[docs.length - 1].$id;
 
+    // Stop if we've hit the recent-only limit
+    if (recentOnly && totalCopied >= recentOnly) {
+      progress?.update(recentOnly);
+      break;
+    }
+
     // Appwrite caps result.total at 5000 — adjust progress bar if we exceed it
-    if (progress && totalDocs && totalCopied > totalDocs) {
-      // Estimate remaining: if we haven't hit the last page, assume at least one more batch
+    if (progress && effectiveTotal && totalCopied > effectiveTotal) {
       const estimatedTotal = docs.length < batchSize
         ? totalCopied
         : totalCopied + batchSize;
       progress.setTotal(estimatedTotal);
-      totalDocs = estimatedTotal;
     }
     progress?.update(totalCopied);
 

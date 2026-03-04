@@ -160,11 +160,22 @@ export const migrateCommands = {
       },
     ]);
 
+    const { recentOnlyInput } = await inquirer.prompt([
+      {
+        type: "input",
+        name: "recentOnlyInput",
+        message: "Migrate only N most recent rows per attribute? (leave blank for all):",
+        default: "",
+      },
+    ]);
+    const recentOnly = recentOnlyInput ? parseInt(recentOnlyInput, 10) : undefined;
+
     const options: ExecuteOptions = {
       planPath,
       keepBackups,
       dryRun,
       freshRun,
+      recentOnly,
     };
 
     try {

@@ -62,9 +62,10 @@ import type { DatabaseAdapter } from '@njdamstra/appwrite-utils-helpers';
 import { hasSessionAuth, findSessionByEndpointAndProject, isValidSessionCookie, type SessionAuthInfo } from "@njdamstra/appwrite-utils-helpers";
 import { fetchAllDatabases } from "./databases/methods.js";
 import {
-  listFunctions,
+  fetchAllFunctions,
   updateFunctionSpecifications,
 } from "./functions/methods.js";
+import { fetchAllBuckets as fetchAllBucketsHelper } from "./storage/methods.js";
 import chalk from "chalk";
 import { deployLocalFunction } from "./functions/deployments.js";
 import fs from "node:fs";
@@ -404,12 +405,10 @@ export class UtilsController {
     }
 
     try {
-      const result = await this.storage.listBuckets([
-        Query.limit(1000) // Increase limit to get all buckets
-      ]);
+      const buckets = await fetchAllBucketsHelper(this.storage);
 
-      MessageFormatter.success(`Found ${result.buckets.length} buckets`, { prefix: "Controller" });
-      return result;
+      MessageFormatter.success(`Found ${buckets.length} buckets`, { prefix: "Controller" });
+      return { buckets };
     } catch (error: any) {
       MessageFormatter.error(`Failed to fetch buckets: ${error.message || error}`, error instanceof Error ? error : undefined, { prefix: "Controller" });
       return { buckets: [] };
@@ -456,9 +455,7 @@ export class UtilsController {
       MessageFormatter.error("Appwrite server not initialized", undefined, { prefix: "Controller" });
       return [];
     }
-    const { functions } = await listFunctions(this.appwriteServer, [
-      Query.limit(1000),
-    ]);
+    const functions = await fetchAllFunctions(this.appwriteServer);
     return functions;
   }
 
@@ -538,9 +535,7 @@ export class UtilsController {
     }
 
     const localFunctions = this.config?.functions || [];
-    const remoteFunctions = await listFunctions(this.appwriteServer, [
-      Query.limit(1000),
-    ]);
+    const remoteFunctions = await fetchAllFunctions(this.appwriteServer);
 
     for (const localFunction of localFunctions) {
       MessageFormatter.progress(`Syncing function ${localFunction.name}...`, { prefix: "Functions" });

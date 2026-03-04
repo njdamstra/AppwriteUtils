@@ -2,7 +2,7 @@ import inquirer from "inquirer";
 import { Databases, Storage } from "node-appwrite";
 import { MessageFormatter } from '@njdamstra/appwrite-utils-helpers';
 import { fetchAllDatabases } from "../../databases/methods.js";
-import { listBuckets } from "../../storage/methods.js";
+import { fetchAllBuckets } from "../../storage/methods.js";
 import { getClient } from "@njdamstra/appwrite-utils-helpers";
 import { ComprehensiveTransfer, type ComprehensiveTransferOptions } from "../../migrations/comprehensiveTransfer.js";
 import type { TransferOptions } from "../../migrations/transfer.js";
@@ -122,18 +122,18 @@ export const transferCommands = {
           )
         : sourceStorage;
 
-      const sourceBuckets = await listBuckets(sourceStorage);
-      const targetBuckets = isRemote
-        ? await listBuckets(targetStorage)
-        : sourceBuckets;
+      const sourceBucketsList = await fetchAllBuckets(sourceStorage);
+      const targetBucketsList = isRemote
+        ? await fetchAllBuckets(targetStorage)
+        : sourceBucketsList;
 
       const sourceBucketPicked = await (cli as any).selectBuckets(
-        sourceBuckets.buckets,
+        sourceBucketsList,
         "Select the source bucket:",
         false
       );
       const targetBucketPicked = await (cli as any).selectBuckets(
-        targetBuckets.buckets,
+        targetBucketsList,
         "Select the target bucket:",
         false
       );

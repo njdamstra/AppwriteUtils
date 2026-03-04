@@ -8,7 +8,7 @@ import { SelectionDialogs } from "../../shared/selectionDialogs.js";
 import type { DatabaseSelection, BucketSelection } from "../../shared/selectionDialogs.js";
 import { logger } from '@njdamstra/appwrite-utils-helpers';
 import { fetchAllDatabases } from "../../databases/methods.js";
-import { listBuckets } from "../../storage/methods.js";
+import { fetchAllBuckets } from "../../storage/methods.js";
 import { getFunction, downloadLatestFunctionDeployment } from "../../functions/methods.js";
 import { wipeTableRows } from "../../collections/wipeOperations.js";
 import type { InteractiveCLI } from "../../interactiveCLI.js";
@@ -109,8 +109,7 @@ export const databaseCommands = {
       if (selectBuckets) {
         // Get available and configured buckets
         try {
-          const availableBucketsResponse = await listBuckets((cli as any).controller!.storage!);
-          const availableBuckets = availableBucketsResponse.buckets || [];
+          const availableBuckets = await fetchAllBuckets((cli as any).controller!.storage!);
           const configuredBuckets = (cli as any).controller!.config?.buckets || [];
 
           if (availableBuckets.length === 0) {
@@ -521,13 +520,13 @@ export const databaseCommands = {
 
       let selectedBuckets: string[] = [];
       if (includeBuckets) {
-        const buckets = await listBuckets((cli as any).controller!.storage);
+        const bucketsList = await fetchAllBuckets((cli as any).controller!.storage);
         const { bucketIds } = await inquirer.prompt([
           {
             type: "checkbox",
             name: "bucketIds",
             message: "Select buckets to backup:",
-            choices: buckets.buckets.map((b: any) => ({
+            choices: bucketsList.map((b: any) => ({
               name: `${b.name} (${b.$id})`,
               value: b.$id
             }))
@@ -672,7 +671,7 @@ export const databaseCommands = {
       );
     }
     const databases = await fetchAllDatabases((cli as any).controller!.database);
-    const storage = await listBuckets((cli as any).controller!.storage);
+    const storageBuckets = await fetchAllBuckets((cli as any).controller!.storage);
 
     const selectedDatabases = await (cli as any).selectDatabases(
       databases,
@@ -684,7 +683,7 @@ export const databaseCommands = {
         type: "checkbox",
         name: "selectedStorage",
         message: "Select storage buckets to wipe:",
-        choices: storage.buckets.map((s: any) => ({ name: s.name, value: s.$id })),
+        choices: storageBuckets.map((s: any) => ({ name: s.name, value: s.$id })),
       },
     ]);
 

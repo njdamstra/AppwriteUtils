@@ -25,9 +25,10 @@ import {
   type Specification,
 } from "@njdamstra/appwrite-utils";
 import { getDatabaseFromConfig } from "./afterImportActions.js";
-import { getAdapterFromConfig } from "@njdamstra/appwrite-utils-helpers";
-import { listBuckets } from "../storage/methods.js";
-import { listFunctions, listFunctionDeployments, getFunction } from "../functions/methods.js";
+import { getAdapterFromConfig, ConstantsGenerator } from "@njdamstra/appwrite-utils-helpers";
+import { fetchAllBuckets } from "../storage/methods.js";
+import { fetchAllFunctions, listFunctionDeployments, getFunction } from "../functions/methods.js";
+import { getFilterConfig, filterDatabases, filterBuckets, fetchFilteredCollections, isDatabaseIncluded } from "../shared/resourceFilter.js";
 import { MessageFormatter } from "@njdamstra/appwrite-utils-helpers";
 import { isLegacyDatabases } from "@njdamstra/appwrite-utils-helpers";
 import type { DatabaseAdapter } from "@njdamstra/appwrite-utils-helpers";
@@ -277,6 +278,8 @@ export class AppwriteToX {
     await this.initializeAdapter();
 
     const db = getDatabaseFromConfig(config);
+    const resourceFilter = getFilterConfig(config);
+
     if (!databases) {
       try {
         MessageFormatter.info("Fetching remote databases...", { prefix: "Migration" });
@@ -290,6 +293,12 @@ export class AppwriteToX {
         );
         throw new Error(`Database fetch failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
+    }
+
+    // Apply resource filter (constantsConfig) to exclude unwanted databases
+    databases = filterDatabases(databases, resourceFilter);
+    if (resourceFilter) {
+      MessageFormatter.info(`After filter: ${databases.length} databases to process`, { prefix: "Migration" });
     }
 
     // Filter databases based on selection if provided
@@ -339,13 +348,14 @@ export class AppwriteToX {
 
     MessageFormatter.success(`Database sync summary: ${addedCount} added, ${updatedCount} updated, ${updatedConfig.databases.length} total`, { prefix: "Migration" });
 
-    // Fetch all buckets
-    const allBuckets = await listBuckets(this.storage);
+    // Fetch all buckets and apply resource filter
+    const allBuckets = await fetchAllBuckets(this.storage);
+    const filteredBucketList = filterBuckets(allBuckets, resourceFilter);
 
     // Filter buckets based on selection if provided
-    let matchedBuckets = allBuckets.buckets;
+    let matchedBuckets = filteredBucketList;
     if (bucketSelections && bucketSelections.length > 0) {
-      matchedBuckets = allBuckets.buckets.filter(bucket =>
+      matchedBuckets = allBuckets.filter(bucket =>
         bucketSelections.some(selection => selection.bucketId === bucket.$id)
       );
       MessageFormatter.info(`Filtered to ${matchedBuckets.length} selected buckets`, { prefix: "Migration" });
@@ -380,8 +390,20 @@ export class AppwriteToX {
         }
       }
 
-      // Use adapter-aware collection/table fetching with proper API mode detection
-      const collections = await this.fetchCollectionsOrTables(database.$id, db);
+      // Use adapter-aware collection/table fetching with resource filter
+      let collections: Models.Collection[];
+      if (resourceFilter && !isDatabaseIncluded(database, resourceFilter)) {
+        // Excluded DB kept only for cherry-picks — use filtered fetch
+        collections = await fetchFilteredCollections(database.$id, database.name, db, resourceFilter);
+      } else {
+        collections = await this.fetchCollectionsOrTables(database.$id, db);
+        // Apply collection-level filter for included DBs
+        if (resourceFilter?.collections) {
+          collections = collections.filter(c =>
+            ConstantsGenerator.shouldInclude(c.name, c.$id, resourceFilter.collections)
+          );
+        }
+      }
 
       // Filter collections based on table selection if provided
       let collectionsToProcess = collections;
@@ -555,7 +577,7 @@ export class AppwriteToX {
     }
     // Add unmatched buckets as global buckets
     // Use filtered buckets if selections provided, otherwise use all buckets
-    const sourceBuckets = bucketSelections && bucketSelections.length > 0 ? matchedBuckets : allBuckets.buckets;
+    const sourceBuckets = bucketSelections && bucketSelections.length > 0 ? matchedBuckets : allBuckets;
     const globalBuckets = sourceBuckets.filter(
       (bucket) =>
         !updatedConfig.databases.some(
@@ -574,13 +596,11 @@ export class AppwriteToX {
       antivirus: bucket.antivirus,
     }));
 
-    const remoteFunctions = await listFunctions(this.config.appwriteClient!, [
-      Query.limit(1000),
-    ]);
+    const remoteFunctions = await fetchAllFunctions(this.config.appwriteClient!);
 
     // Fetch full details per function to ensure 'scopes' and other fields are present
     const detailedFunctions: any[] = [];
-    for (const f of remoteFunctions.functions) {
+    for (const f of remoteFunctions) {
       try {
         const full = await getFunction(this.config.appwriteClient!, f.$id);
         detailedFunctions.push(full);

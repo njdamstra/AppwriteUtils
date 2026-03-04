@@ -17,6 +17,7 @@ import {
 } from "node-appwrite";
 import { InputFile } from "node-appwrite/file";
 import { MessageFormatter, getClient } from "@njdamstra/appwrite-utils-helpers";
+import { fetchAllDatabases } from "../databases/methods.js";
 import { processQueue, queuedOperations } from "../shared/operationQueue.js";
 import { ProgressManager } from "../shared/progressManager.js";
 import {
@@ -28,7 +29,7 @@ import {
 } from "./transfer.js";
 import { deployLocalFunction } from "../functions/deployments.js";
 import {
-  listFunctions,
+  fetchAllFunctions,
   downloadLatestFunctionDeployment,
 } from "../functions/methods.js";
 import pLimit from "p-limit";
@@ -370,12 +371,12 @@ export class ComprehensiveTransfer {
     });
 
     try {
-      const sourceDatabases = await this.sourceDatabases.list();
-      const targetDatabases = await this.targetDatabases.list();
+      const sourceDbList = await fetchAllDatabases(this.sourceDatabases);
+      const targetDbList = await fetchAllDatabases(this.targetDatabases);
 
       if (this.options.dryRun) {
         MessageFormatter.info(
-          `DRY RUN: Would transfer ${sourceDatabases.databases.length} databases`,
+          `DRY RUN: Would transfer ${sourceDbList.length} databases`,
           { prefix: "Transfer" }
         );
         return;
@@ -387,11 +388,11 @@ export class ComprehensiveTransfer {
         { prefix: "Transfer" }
       );
 
-      const structureCreationTasks = sourceDatabases.databases.map((db) =>
+      const structureCreationTasks = sourceDbList.map((db) =>
         this.limit(async () => {
           try {
             // Check if database exists in target
-            const existingDb = targetDatabases.databases.find(
+            const existingDb = targetDbList.find(
               (tdb) => tdb.$id === db.$id
             );
 
@@ -428,7 +429,7 @@ export class ComprehensiveTransfer {
         { prefix: "Transfer" }
       );
 
-      const documentTransferTasks = sourceDatabases.databases.map((db) =>
+      const documentTransferTasks = sourceDbList.map((db) =>
         this.limit(async () => {
           try {
             // Transfer documents for this database
@@ -1205,26 +1206,22 @@ export class ComprehensiveTransfer {
     });
 
     try {
-      const sourceFunctions = await listFunctions(this.sourceClient, [
-        Query.limit(1000),
-      ]);
-      const targetFunctions = await listFunctions(this.targetClient, [
-        Query.limit(1000),
-      ]);
+      const sourceFunctionsList = await fetchAllFunctions(this.sourceClient);
+      const targetFunctionsList = await fetchAllFunctions(this.targetClient);
 
       if (this.options.dryRun) {
         MessageFormatter.info(
-          `DRY RUN: Would transfer ${sourceFunctions.functions.length} functions`,
+          `DRY RUN: Would transfer ${sourceFunctionsList.length} functions`,
           { prefix: "Transfer" }
         );
         return;
       }
 
-      const transferTasks = sourceFunctions.functions.map((func) =>
+      const transferTasks = sourceFunctionsList.map((func) =>
         this.limit(async () => {
           try {
             // Check if function exists in target
-            const existingFunc = targetFunctions.functions.find(
+            const existingFunc = targetFunctionsList.find(
               (tf) => tf.$id === func.$id
             );
 

@@ -3,7 +3,7 @@ import chalk from "chalk";
 import { Storage, Permission, Role, Compression, type Models } from "node-appwrite";
 import type { InteractiveCLI } from "../../interactiveCLI.js";
 import { MessageFormatter } from '@njdamstra/appwrite-utils-helpers';
-import { listBuckets, createBucket as createBucketApi, deleteBucket as deleteBucketApi } from "../../storage/methods.js";
+import { fetchAllBuckets, createBucket as createBucketApi, deleteBucket as deleteBucketApi } from "../../storage/methods.js";
 import { writeYamlConfig, ConfigManager } from "@njdamstra/appwrite-utils-helpers";
 
 export const storageCommands = {
@@ -86,8 +86,7 @@ export const storageCommands = {
     }
 
     try {
-      const res = await listBuckets(storage);
-      const buckets: Models.Bucket[] = res.buckets || [];
+      const buckets: Models.Bucket[] = await fetchAllBuckets(storage);
       if (buckets.length === 0) {
         MessageFormatter.info('No buckets found', { prefix: 'Buckets' });
         return;

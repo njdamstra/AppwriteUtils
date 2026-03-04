@@ -18,6 +18,8 @@ import type { SetupOptions } from "../utilsController.js";
 import { resolveAndUpdateRelationships } from "./relationships.js";
 import { UsersController } from "../users/methods.js";
 import { logger, LegacyAdapter } from "@njdamstra/appwrite-utils-helpers";
+import { fetchAllDatabases } from "../databases/methods.js";
+import { fetchAllBuckets } from "../storage/methods.js";
 import { updateOperation } from "../shared/migrationHelpers.js";
 import {
   BatchSchema,
@@ -76,8 +78,7 @@ export class ImportController {
       databasesToProcess = this.databasesToRun;
     } else {
       // If no databases are specified, fetch all databases
-      const allDatabases = await this.database.list();
-      databasesToProcess = allDatabases.databases;
+      databasesToProcess = await fetchAllDatabases(this.database);
     }
 
     let dataLoader: DataLoader | undefined;
@@ -135,8 +136,8 @@ export class ImportController {
         (db) => db.$id === targetDb.$id
       );
 
-      const allBuckets = await this.storage.listBuckets([Query.limit(1000)]);
-      const bucketsWithDbIdInThem = allBuckets.buckets.filter((bucket) =>
+      const allBuckets = await fetchAllBuckets(this.storage);
+      const bucketsWithDbIdInThem = allBuckets.filter((bucket) =>
         bucket.name.toLowerCase().includes(updatedDb.$id.toLowerCase())
       );
       const configuredUpdatedBucketId = `${
