@@ -19,8 +19,10 @@ const publishList = (process.env.PUBLISH_PACKAGES || "all")
   .map((value) => value.trim())
   .filter(Boolean);
 
-const shouldUpdate = (pkgName) =>
-  publishList.includes("all") || publishList.includes(pkgName);
+const shouldUpdate = (pkgName) => {
+  const shortName = pkgName.replace(/^@njdamstra\//, "");
+  return publishList.includes("all") || publishList.includes(pkgName) || publishList.includes(shortName);
+};
 
 const localVersions = {
   "@njdamstra/appwrite-utils": readJson("packages/appwrite-utils/package.json").version,
